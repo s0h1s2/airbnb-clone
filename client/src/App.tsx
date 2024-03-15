@@ -11,6 +11,7 @@ import AccountPage from "./pages/AccountPage"
 import ProfilePage from "./pages/ProfilePage"
 import BookingsPage from "./pages/BookingsPage"
 import PlacesPage from "./pages/PlacesPage"
+import NewPlace from "./pages/NewPlace"
 type UserResponse = OkResponseResult<{
   user: {
     name: string,
@@ -44,6 +45,7 @@ function App() {
             <Route path="/account/profile" element={<ProfilePage />} />
             <Route path="/account/bookings" element={<BookingsPage />} />
             <Route path="/account/places" element={<PlacesPage />} />
+            <Route path="/account/places/new" element={<NewPlace />} />
           </Route>
         </Route>
       </Route>

@@ -8,6 +8,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/s0h1s2/airbnb-clone/config"
 	"github.com/s0h1s2/airbnb-clone/internal/db"
+	"github.com/s0h1s2/airbnb-clone/internal/places"
 	"github.com/s0h1s2/airbnb-clone/internal/users"
 )
 
@@ -28,6 +29,9 @@ func CORSMiddleware() gin.HandlerFunc {
 }
 func migrateTables() {
 	db.Db.AutoMigrate(&users.UserModel{})
+	db.Db.AutoMigrate(&places.PlaceModel{})
+	db.Db.AutoMigrate(&places.PlacePhoto{})
+	db.Db.AutoMigrate(&places.PlacePerk{})
 }
 func main() {
 	err := godotenv.Load()

@@ -3,6 +3,7 @@ package users
 import (
 	"time"
 
+	"github.com/s0h1s2/airbnb-clone/internal/places"
 	"github.com/s0h1s2/airbnb-clone/internal/util"
 )
 
@@ -13,6 +14,7 @@ type UserModel struct {
 	Password  string `json:"omitempty"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
+	Places    []places.PlaceModel
 }
 
 func (UserModel) TableName() string {
