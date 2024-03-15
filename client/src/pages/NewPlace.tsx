@@ -6,7 +6,9 @@ type NewPlaceForm = {
   title: string,
   address: string,
   description: string
+  perks: string[]
 }
+const PERKS_NAME_FIELD = "perks[]"
 type NewPlaceHeadProps = { title: string, description: string }
 type Props = InputProps & NewPlaceHeadProps
 const NewPlaceInputHead = ({ title, description }: NewPlaceHeadProps) => {
@@ -21,7 +23,7 @@ const NewPlaceInputHead = ({ title, description }: NewPlaceHeadProps) => {
 const CheckBox = ({ children, name }: { children: React.ReactNode, name: string }) => {
   return (
     <label className="border p-4 flex rounded-xl gap-2 items-center">
-      <input type="checkbox" />
+      <input name={PERKS_NAME_FIELD} value={name} type="checkbox" />
       <span>
         {children}
         {name}
@@ -40,8 +42,11 @@ const NewPlaceInput = ({ title, description, field, placeholder, type }: Props) 
 
 }
 const NewPlace = () => {
-  const onSubmit = async () => { }
+  const onSubmit = async (data: NewPlaceForm) => {
+    console.log(data)
+  }
   const { register, handleSubmit } = useForm<NewPlaceForm>()
+
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -80,11 +85,8 @@ const NewPlace = () => {
               <path d="M64 32C28.7 32 0 60.7 0 96v320c0 35.3 28.7 64 64 64h320c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zm128 224h48c17.7 0 32-14.3 32-32s-14.3-32-32-32h-48v64zm48 64h-48v32c0 17.7-14.3 32-32 32s-32-14.3-32-32V168c0-22.1 17.9-40 40-40h72c53 0 96 43 96 96s-43 96-96 96z" />
             </svg>
           </CheckBox>
-
-
-
         </div>
-
+        <button className="primary">Create</button>
       </form>
     </div>
   )

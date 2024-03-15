@@ -23,6 +23,6 @@ type PlacePhoto struct {
 }
 type PlacePerk struct {
 	gorm.Model
-	Url          string
+	Name         string
 	PlaceModelID int
 }
