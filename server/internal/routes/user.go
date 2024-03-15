@@ -40,7 +40,7 @@ type Claims struct {
 func userRegisterRoute(ctx *gin.Context) {
 	var json createUserRequest
 	if err := ctx.ShouldBindJSON(&json); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorApiResponse{Error: err, StatusCode: http.StatusBadRequest})
+		ctx.JSON(http.StatusBadRequest, errorApiResponse{Errors: err, StatusCode: http.StatusBadRequest})
 
 		return
 	}
@@ -57,7 +57,8 @@ func userRegisterRoute(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, okApiResponse{StatusCode: http.StatusOK, Data: createUserResponse{Email: newUser.Email, Name: newUser.Name}})
 		return
 	}
-	ctx.JSON(http.StatusBadRequest, errorApiResponse{StatusCode: http.StatusBadRequest, Error: userAlredyExist.Error()})
+	ctx.JSON(http.StatusBadRequest, errorApiResponse{StatusCode: http.StatusBadRequest, Errors: createUserResponse{Email: userAlredyExist.Error()}})
+
 	return
 
 }
@@ -69,7 +70,7 @@ func userAuthRoute(ctx *gin.Context) {
 		})
 		return
 	}
-	user := models.User{} // 0x1
+	user := models.User{}
 	result := db.Db.Where("email = ?", json.Email).First(&user)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		ctx.JSON(http.StatusUnauthorized, gin.H{

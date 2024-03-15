@@ -5,6 +5,6 @@ type okApiResponse struct {
 	Data       interface{} `json:"data"`
 }
 type errorApiResponse struct {
-	StatusCode int         `json:"status_code"`
-	Error      interface{} `json:"error"`
+	StatusCode int         `json:"statusCode"`
+	Errors     interface{} `json:"errors"`
 }

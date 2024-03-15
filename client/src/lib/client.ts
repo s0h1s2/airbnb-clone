@@ -4,5 +4,8 @@ const client = axios.create({
   baseURL: "http://localhost:8080/api/v1/",
 })
 
+export interface ResponseResult {
+  statusCode: number
+}
 
 export default client
