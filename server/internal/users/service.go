@@ -20,11 +20,6 @@ var (
 	invalidCredentials = errors.New("Invalid credentials")
 )
 
-type Claims struct {
-	Email string `json:"email"`
-	jwt.RegisteredClaims
-}
-
 func userRegisterRoute(ctx *gin.Context) {
 	var json createUserRequest
 	if err := ctx.ShouldBindJSON(&json); err != nil {
@@ -72,8 +67,9 @@ func userAuthRoute(ctx *gin.Context) {
 	}
 	// create token
 	expireTime := time.Now().Add(1 * time.Hour)
-	claims := &Claims{
-		Email: json.Email,
+	claims := &common.UserClaims{
+		Email: user.Email,
+		Name:  user.Name,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expireTime),
 		},
@@ -91,11 +87,13 @@ func userAuthRoute(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, common.OkApiResponse{Data: loginUserResponse{Email: user.Email, Name: user.Name}, StatusCode: http.StatusOK})
 }
 func userInfoRoute(ctx *gin.Context) {
+	user, _ := ctx.Get("user")
+	u := user.(common.UserClaims)
 	ctx.JSON(http.StatusOK, common.OkApiResponse{
 		Data: userInfoResponse{
 			User: userInfo{
-				Name:  "John",
-				Email: "user@mail.com",
+				Name:  u.Name,
+				Email: u.Email,
 			},
 		},
 		StatusCode: http.StatusOK,

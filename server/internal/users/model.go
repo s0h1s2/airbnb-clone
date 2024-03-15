@@ -15,6 +15,10 @@ type UserModel struct {
 	UpdatedAt time.Time
 }
 
+func (UserModel) TableName() string {
+	return "users"
+}
+
 func (user *UserModel) HashPassword() {
 	hashedPassword := util.HashPassword(user.Password)
 	user.Password = hashedPassword
