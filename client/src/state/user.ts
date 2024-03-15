@@ -6,8 +6,12 @@ export interface IUser {
 export interface IUserSlice {
   user: IUser | null
   setUser: (user: IUser) => void
+  removeUser: () => void
 }
 export const createUserSlice: StateCreator<IUserSlice> = (set) => ({
+  removeUser() {
+    set(() => ({ user: null }))
+  },
   setUser(user) {
     set(() => ({ user: user }))
   },

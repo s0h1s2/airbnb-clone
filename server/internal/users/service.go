@@ -100,3 +100,7 @@ func userInfoRoute(ctx *gin.Context) {
 	})
 
 }
+func userLogoutRoute(ctx *gin.Context) {
+	ctx.SetCookie("token", "", -1, "/", "", false, true)
+	ctx.JSON(http.StatusOK, gin.H{})
+}

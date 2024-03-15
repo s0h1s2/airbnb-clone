@@ -7,6 +7,10 @@ import { useEffect } from "react"
 import client, { OkResponseResult } from "./lib/client"
 import { useBoundStore } from "./state/boundState"
 import ProtectedPage from "./components/ProtectedPage"
+import AccountPage from "./pages/AccountPage"
+import ProfilePage from "./pages/ProfilePage"
+import BookingsPage from "./pages/BookingsPage"
+import PlacesPage from "./pages/PlacesPage"
 type UserResponse = OkResponseResult<{
   user: {
     name: string,
@@ -36,6 +40,11 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route element={<ProtectedPage />}>
           <Route path="/home" element={<IndexPage />} />
+          <Route path="/account" element={<AccountPage />}>
+            <Route path="/account/profile" element={<ProfilePage />} />
+            <Route path="/account/bookings" element={<BookingsPage />} />
+            <Route path="/account/places" element={<PlacesPage />} />
+          </Route>
         </Route>
       </Route>
     </Routes>

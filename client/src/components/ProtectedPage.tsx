@@ -1,6 +1,6 @@
 import { DNA } from "react-loader-spinner"
 import { useBoundStore } from "../state/boundState"
-import { Navigate } from 'react-router-dom'
+import { Navigate, Outlet } from 'react-router-dom'
 const ProtectedPage = () => {
   const user = useBoundStore((state) => state.user)
   if (user == undefined) {
@@ -14,7 +14,9 @@ const ProtectedPage = () => {
       />
     )
   }
-  return user === null && <Navigate to={"/login"} replace />
+  return user ? <Outlet /> : <Navigate to={"/login"} replace />
+
+
 }
 
 export default ProtectedPage
