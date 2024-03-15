@@ -1,4 +1,4 @@
-package routes
+package users
 
 import (
 	"errors"
@@ -9,8 +9,8 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/rs/zerolog/log"
 	"github.com/s0h1s2/airbnb-clone/config"
+	"github.com/s0h1s2/airbnb-clone/internal/common"
 	"github.com/s0h1s2/airbnb-clone/internal/db"
-	"github.com/s0h1s2/airbnb-clone/internal/models"
 	"github.com/s0h1s2/airbnb-clone/internal/util"
 	"gorm.io/gorm"
 )
@@ -20,24 +20,6 @@ var (
 	invalidCredentials = errors.New("Invalid credentials")
 )
 
-type createUserRequest struct {
-	Email    string `json:"email" binding:"required,email" `
-	Name     string `json:"name" binding:"required"`
-	Password string `json:"password" binding:"required,min=5,max=72"`
-}
-type createUserResponse struct {
-	Name  string `json:"name"`
-	Email string `json:"email"`
-}
-type loginUserRequest struct {
-	Email    string `json:"email" binding:"required,email" `
-	Password string `json:"password" binding:"required"`
-}
-type loginUserResponse struct {
-	Email string `json:"email"`
-	Name  string `json:"name"`
-}
-
 type Claims struct {
 	Email string `json:"email"`
 	jwt.RegisteredClaims
@@ -46,24 +28,24 @@ type Claims struct {
 func userRegisterRoute(ctx *gin.Context) {
 	var json createUserRequest
 	if err := ctx.ShouldBindJSON(&json); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorApiResponse{Errors: err, StatusCode: http.StatusBadRequest})
+		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{Errors: err, StatusCode: http.StatusBadRequest})
 
 		return
 	}
-	user := models.User{}
+	user := UserModel{}
 	result := db.Db.Where("email = ?", json.Email).First(&user)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		// let's create the user
-		hashedPassword := util.HashPassword(json.Password)
+		newUser := UserModel{Name: json.Name, Email: json.Email, Password: json.Password}
 
-		newUser := models.User{Name: json.Name, Email: json.Email, Password: string(hashedPassword)}
+		newUser.HashPassword()
 
 		db.Db.Create(&newUser)
 
-		ctx.JSON(http.StatusCreated, okApiResponse{StatusCode: http.StatusCreated, Data: createUserResponse{Email: newUser.Email, Name: newUser.Name}})
+		ctx.JSON(http.StatusCreated, common.OkApiResponse{StatusCode: http.StatusCreated, Data: createUserResponse{Email: newUser.Email, Name: newUser.Name}})
 		return
 	}
-	ctx.JSON(http.StatusBadRequest, errorApiResponse{StatusCode: http.StatusBadRequest, Errors: createUserResponse{Email: userAlredyExist.Error()}})
+	ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{StatusCode: http.StatusBadRequest, Errors: createUserResponse{Email: userAlredyExist.Error()}})
 
 	return
 
@@ -76,16 +58,16 @@ func userAuthRoute(ctx *gin.Context) {
 		})
 		return
 	}
-	user := models.User{}
+	user := UserModel{}
 	result := db.Db.Where("email = ?", json.Email).First(&user)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		ctx.JSON(http.StatusUnauthorized, errorApiResponse{Errors: invalidCredentials.Error(), StatusCode: http.StatusUnauthorized})
+		ctx.JSON(http.StatusUnauthorized, common.ErrorApiResponse{Errors: invalidCredentials.Error(), StatusCode: http.StatusUnauthorized})
 		return
 	}
 	// Check if hashed password and json password match
 	hashResult := util.VerifyPassword(user.Password, json.Password)
 	if !hashResult {
-		ctx.JSON(http.StatusUnauthorized, errorApiResponse{Errors: invalidCredentials.Error(), StatusCode: http.StatusUnauthorized})
+		ctx.JSON(http.StatusUnauthorized, common.ErrorApiResponse{Errors: invalidCredentials.Error(), StatusCode: http.StatusUnauthorized})
 		return
 	}
 	// create token
@@ -106,5 +88,17 @@ func userAuthRoute(ctx *gin.Context) {
 		return
 	}
 	ctx.SetCookie("token", tokenString, int(expireTime.Unix()), "/", "", false, true)
-	ctx.JSON(http.StatusOK, okApiResponse{Data: loginUserResponse{Email: user.Email, Name: user.Name}, StatusCode: http.StatusOK})
+	ctx.JSON(http.StatusOK, common.OkApiResponse{Data: loginUserResponse{Email: user.Email, Name: user.Name}, StatusCode: http.StatusOK})
+}
+func userInfoRoute(ctx *gin.Context) {
+	ctx.JSON(http.StatusOK, common.OkApiResponse{
+		Data: userInfoResponse{
+			User: userInfo{
+				Name:  "John",
+				Email: "user@mail.com",
+			},
+		},
+		StatusCode: http.StatusOK,
+	})
+
 }

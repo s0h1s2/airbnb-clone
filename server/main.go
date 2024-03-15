@@ -1,13 +1,14 @@
 package main
 
 import (
+	"log"
+
 	"github.com/caarlos0/env/v10"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/s0h1s2/airbnb-clone/config"
 	"github.com/s0h1s2/airbnb-clone/internal/db"
-	"github.com/s0h1s2/airbnb-clone/internal/routes"
-	"log"
+	"github.com/s0h1s2/airbnb-clone/internal/users"
 )
 
 func CORSMiddleware() gin.HandlerFunc {
@@ -25,6 +26,9 @@ func CORSMiddleware() gin.HandlerFunc {
 		c.Next()
 	}
 }
+func migrateTables() {
+	db.Db.AutoMigrate(&users.UserModel{})
+}
 func main() {
 	err := godotenv.Load()
 	if err != nil {
@@ -35,9 +39,10 @@ func main() {
 		return
 	}
 	db.InitDb()
+	migrateTables()
 	r := gin.Default()
 	r.Use(CORSMiddleware())
 	v1 := r.Group("/api/v1/")
-	routes.RegisterRoutes(v1)
+	users.RegisterRoutes(v1)
 	r.Run()
 }
