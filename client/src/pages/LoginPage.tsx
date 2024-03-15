@@ -1,7 +1,7 @@
 import { SubmitHandler, useForm } from "react-hook-form"
 import Input from "../components/Input"
 import { Link, useNavigate } from "react-router-dom"
-import client, { ResponseResult } from "../lib/client"
+import client, { OkResponseResult } from "../lib/client"
 import { toast } from "react-toastify"
 import { useBoundStore } from "../state/boundState"
 import clsx from "clsx"
@@ -10,9 +10,8 @@ type LoginForm = {
   email: string,
   password: string
 }
-type UserResponseSuccess = ResponseResult & {
-  data: { email: string, name: string }
-}
+type UserResponseSuccess = OkResponseResult<{ email: string, name: string }>
+
 const LoginPage = () => {
   const { register, handleSubmit, formState: { isSubmitting, errors } } = useForm<LoginForm>()
   const navigate = useNavigate()
