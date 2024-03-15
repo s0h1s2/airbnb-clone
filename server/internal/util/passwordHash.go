@@ -1,16 +1,14 @@
 package util
 
 import (
-	"log"
-
 	"golang.org/x/crypto/bcrypt"
+	"log"
 )
 
 const cost = bcrypt.DefaultCost
 
 func HashPassword(raw string) string {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(raw), cost)
-
 	if err != nil {
 		log.Fatal(err)
 	}

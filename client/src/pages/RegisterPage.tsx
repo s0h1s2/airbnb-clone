@@ -1,6 +1,7 @@
 import { SubmitHandler, useForm } from "react-hook-form"
 import Input from "../components/Input"
 import { Link } from "react-router-dom"
+import client from "../lib/client"
 type LoginForm = {
   name: string,
   email: string,
@@ -8,7 +9,9 @@ type LoginForm = {
 }
 const RegisterPage = () => {
   const { register, handleSubmit } = useForm<LoginForm>()
-  const onSubmit: SubmitHandler<LoginForm> = (data) => { console.log(data) }
+  const onSubmit: SubmitHandler<LoginForm> = async (data) => {
+    client.post("/users", data,).then((response) => console.log(response.data)).catch((e) => console.log("ERROR" + e))
+  }
 
   return (
     <div className="mt-4 grow flex items-center justify-around">

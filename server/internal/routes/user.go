@@ -12,31 +12,19 @@ import (
 	"github.com/s0h1s2/airbnb-clone/internal/db"
 	"github.com/s0h1s2/airbnb-clone/internal/models"
 	"github.com/s0h1s2/airbnb-clone/internal/util"
+	"github.com/s0h1s2/airbnb-clone/internal/validation"
 	"gorm.io/gorm"
 )
 
-type createUser struct {
-	Email    string `json:"email" binding:"required,email" `
-	Name     string `json:"name" binding:"required"`
-	Password string `json:"password" binding:"required"`
-}
-type loginUser struct {
-	Email    string `json:"email" binding:"required,email" `
-	Password string `json:"password" binding:"required"`
-}
 type Claims struct {
 	Email string `json:"email"`
 	jwt.RegisteredClaims
 }
 
 func userRegisterRoute(ctx *gin.Context) {
-	var json createUser
-	if err := ctx.ShouldBindJSON(&json); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
+	data, _ := ctx.Get("body")
+	json, _ := data.(validation.CreateUserRequest)
+
 	user := models.User{}
 	result := db.Db.Where("email = ?", json.Email).First(&user)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
@@ -45,13 +33,9 @@ func userRegisterRoute(ctx *gin.Context) {
 
 		newUser := models.User{Name: json.Name, Email: json.Email, Password: string(hashedPassword)}
 
-		result := db.Db.Create(&newUser)
-		if result.Error != nil {
-			log.Error().Err(result.Error).Msg("")
-			return
-		}
+		db.Db.Create(&newUser)
 
-		ctx.JSON(http.StatusBadRequest, gin.H{
+		ctx.JSON(http.StatusOK, gin.H{
 			"data": newUser,
 		})
 		return
@@ -59,16 +43,13 @@ func userRegisterRoute(ctx *gin.Context) {
 	ctx.JSON(http.StatusBadRequest, gin.H{
 		"error": "User already exist",
 	})
+	return
 
 }
 func userAuthRoute(ctx *gin.Context) {
-	var json loginUser
-	if err := ctx.BindJSON(&json); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
+	data, _ := ctx.Get("body")
+	json, _ := data.(validation.LoginUserRequest)
+
 	user := models.User{} // 0x1
 	result := db.Db.Where("email = ?", json.Email).First(&user)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
