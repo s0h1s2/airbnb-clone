@@ -2,10 +2,11 @@ import { SubmitHandler, useForm } from "react-hook-form"
 import Input from "../components/Input"
 import { Link } from "react-router-dom"
 type LoginForm = {
+  name: string,
   email: string,
   password: string
 }
-const LoginPage = () => {
+const RegisterPage = () => {
   const { register, handleSubmit } = useForm<LoginForm>()
   const onSubmit: SubmitHandler<LoginForm> = (data) => { console.log(data) }
 
@@ -16,17 +17,16 @@ const LoginPage = () => {
           Login
         </h1>
         <form className="max-w-md mx-auto" onSubmit={handleSubmit(onSubmit)}>
+          <Input type="text" placeholder="Enter your name" field={register("name", { required: true })} />
           <Input type="email" placeholder="Enter your email" field={register("email", { required: true })} />
           <Input type="password" placeholder="Enter your password" field={register("password", { required: true })} />
           <div className="text-center py-2 text-gray-500">
-            Don't you have an account yet? <Link className="underline text-black" to="/register">Register Now</Link>
-
+            Already a member? <Link className="underline text-black" to="/login">Login</Link>
           </div>
-          <button type="submit" className="w-full p-2 text-white bg-primary rounded-2xl">Login</button>
+          <button type="submit" className="w-full p-2 text-white bg-primary rounded-2xl">Register</button>
         </form>
       </div>
     </div>
   )
 }
-
-export default LoginPage
+export default RegisterPage 

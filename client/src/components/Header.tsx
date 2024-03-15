@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-const header = () => {
+const Header = () => {
   return (
     <header className="flex justify-between">
       <Link to="/" className="flex items-center gap-1">
@@ -39,4 +39,4 @@ const header = () => {
   )
 }
 
-export default header
+export default Header
