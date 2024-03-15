@@ -16,7 +16,8 @@ import (
 )
 
 var (
-	userAlredyExist = errors.New("User already exist")
+	userAlredyExist    = errors.New("User already exist")
+	invalidCredentials = errors.New("Invalid credentials")
 )
 
 type createUserRequest struct {
@@ -32,6 +33,11 @@ type loginUserRequest struct {
 	Email    string `json:"email" binding:"required,email" `
 	Password string `json:"password" binding:"required"`
 }
+type loginUserResponse struct {
+	Email string `json:"email"`
+	Name  string `json:"name"`
+}
+
 type Claims struct {
 	Email string `json:"email"`
 	jwt.RegisteredClaims
@@ -54,7 +60,7 @@ func userRegisterRoute(ctx *gin.Context) {
 
 		db.Db.Create(&newUser)
 
-		ctx.JSON(http.StatusOK, okApiResponse{StatusCode: http.StatusOK, Data: createUserResponse{Email: newUser.Email, Name: newUser.Name}})
+		ctx.JSON(http.StatusCreated, okApiResponse{StatusCode: http.StatusCreated, Data: createUserResponse{Email: newUser.Email, Name: newUser.Name}})
 		return
 	}
 	ctx.JSON(http.StatusBadRequest, errorApiResponse{StatusCode: http.StatusBadRequest, Errors: createUserResponse{Email: userAlredyExist.Error()}})
@@ -73,17 +79,13 @@ func userAuthRoute(ctx *gin.Context) {
 	user := models.User{}
 	result := db.Db.Where("email = ?", json.Email).First(&user)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		ctx.JSON(http.StatusUnauthorized, gin.H{
-			"error": "Email or password are invalid",
-		})
+		ctx.JSON(http.StatusUnauthorized, errorApiResponse{Errors: invalidCredentials.Error(), StatusCode: http.StatusUnauthorized})
 		return
 	}
 	// Check if hashed password and json password match
 	hashResult := util.VerifyPassword(user.Password, json.Password)
 	if !hashResult {
-		ctx.JSON(http.StatusUnauthorized, gin.H{
-			"error": "Email and password are invalid",
-		})
+		ctx.JSON(http.StatusUnauthorized, errorApiResponse{Errors: invalidCredentials.Error(), StatusCode: http.StatusUnauthorized})
 		return
 	}
 	// create token
@@ -104,7 +106,5 @@ func userAuthRoute(ctx *gin.Context) {
 		return
 	}
 	ctx.SetCookie("token", tokenString, int(expireTime.Unix()), "/", "", false, true)
-	ctx.JSON(http.StatusOK, gin.H{
-		"data": "User authenticated",
-	})
+	ctx.JSON(http.StatusOK, okApiResponse{Data: loginUserResponse{Email: user.Email, Name: user.Name}, StatusCode: http.StatusOK})
 }

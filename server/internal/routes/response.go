@@ -1,7 +1,7 @@
 package routes
 
 type okApiResponse struct {
-	StatusCode int         `json:"status_code"`
+	StatusCode int         `json:"statusCode"`
 	Data       interface{} `json:"data"`
 }
 type errorApiResponse struct {

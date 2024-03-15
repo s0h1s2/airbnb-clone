@@ -1,8 +1,10 @@
+import { useBoundStore } from "../state/boundState"
 
 const IndexPage = () => {
+  const user = useBoundStore((state) => state.user)
   return (
     <div>
-      Index page
+      Hello {user?.name}
     </div >
   )
 }

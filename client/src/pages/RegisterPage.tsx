@@ -24,7 +24,7 @@ const RegisterPage = () => {
   const navigate = useNavigate()
   const [apiErrors, setApiErrors] = useState<RegisterFormError>()
   const onSubmit: SubmitHandler<RegisterForm> = async (data) => {
-    await client.post("/users", data).then(() => {
+    return client.post("/users", data).then(() => {
       toast.success("User registered successfuly")
       navigate("/login")
     }).catch((e: AxiosError) => {
@@ -38,7 +38,7 @@ const RegisterPage = () => {
     <div className="mt-4 grow flex items-center justify-around">
       <div className="mb-32">
         <h1 className="text-4xl text-center mb-4">
-          Login
+          Register
         </h1>
         <form className="max-w-md mx-auto" onSubmit={handleSubmit(onSubmit)}>
           <Input type="text" placeholder="Enter your name" field={register("name", { required: true })} />
