@@ -10,7 +10,11 @@ type LoginForm = {
 const RegisterPage = () => {
   const { register, handleSubmit } = useForm<LoginForm>()
   const onSubmit: SubmitHandler<LoginForm> = async (data) => {
-    client.post("/users", data,).then((response) => console.log(response.data)).catch((e) => console.log("ERROR" + e))
+    try {
+      await client.post("/users", data)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (

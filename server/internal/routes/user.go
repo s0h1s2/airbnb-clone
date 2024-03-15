@@ -12,19 +12,38 @@ import (
 	"github.com/s0h1s2/airbnb-clone/internal/db"
 	"github.com/s0h1s2/airbnb-clone/internal/models"
 	"github.com/s0h1s2/airbnb-clone/internal/util"
-	"github.com/s0h1s2/airbnb-clone/internal/validation"
 	"gorm.io/gorm"
 )
 
+var (
+	userAlredyExist = errors.New("User already exist")
+)
+
+type createUserRequest struct {
+	Email    string `json:"email" binding:"required,email" `
+	Name     string `json:"name" binding:"required"`
+	Password string `json:"password" binding:"required,min=5,max=72"`
+}
+type createUserResponse struct {
+	Name  string `json:"name"`
+	Email string `json:"email"`
+}
+type loginUserRequest struct {
+	Email    string `json:"email" binding:"required,email" `
+	Password string `json:"password" binding:"required"`
+}
 type Claims struct {
 	Email string `json:"email"`
 	jwt.RegisteredClaims
 }
 
 func userRegisterRoute(ctx *gin.Context) {
-	data, _ := ctx.Get("body")
-	json, _ := data.(validation.CreateUserRequest)
+	var json createUserRequest
+	if err := ctx.ShouldBindJSON(&json); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorApiResponse{Error: err, StatusCode: http.StatusBadRequest})
 
+		return
+	}
 	user := models.User{}
 	result := db.Db.Where("email = ?", json.Email).First(&user)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
@@ -35,21 +54,21 @@ func userRegisterRoute(ctx *gin.Context) {
 
 		db.Db.Create(&newUser)
 
-		ctx.JSON(http.StatusOK, gin.H{
-			"data": newUser,
-		})
+		ctx.JSON(http.StatusOK, okApiResponse{StatusCode: http.StatusOK, Data: createUserResponse{Email: newUser.Email, Name: newUser.Name}})
 		return
 	}
-	ctx.JSON(http.StatusBadRequest, gin.H{
-		"error": "User already exist",
-	})
+	ctx.JSON(http.StatusBadRequest, errorApiResponse{StatusCode: http.StatusBadRequest, Error: userAlredyExist.Error()})
 	return
 
 }
 func userAuthRoute(ctx *gin.Context) {
-	data, _ := ctx.Get("body")
-	json, _ := data.(validation.LoginUserRequest)
-
+	var json loginUserRequest
+	if err := ctx.BindJSON(&json); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
 	user := models.User{} // 0x1
 	result := db.Db.Where("email = ?", json.Email).First(&user)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
