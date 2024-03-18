@@ -1,3 +1,11 @@
+<script setup lang="ts">
+import MenuItem from './MenuItem.vue'
+import { ref } from "vue"
+const isOpen = ref<bool>(false)
+
+</script>
+
+
 <template>
   <div class="relative">
     <div class="flex flex-row items-center gap-3">
@@ -31,12 +39,15 @@
           <v-icon name="fa-user-alt" />
         </div>
       </div>
+      <div v-if="isOpen"
+        class="absolute rounded-xl shadow-md w-[40vw] md:w-3/4 bg-white overflow-hidden right-0 top-12 text-sm">
+        <div class="flex flex-col cursor-pointer">
+          <MenuItem />
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
-
-</script>
 
 <style scoped></style>
