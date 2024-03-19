@@ -1,10 +1,10 @@
-<script setup>
-const props = defineProps < {
-  label: string,
+<script setup lang="ts">
+interface Props{
+  label:string
   onClick: () => void
-} > ()
+}
+const props = defineProps<Props>()
 </script>
-
 
 <template>
   <div click="onClick" class="px-4 py-3 hover:bg-neutral-100 transition font-semibold">
@@ -13,4 +13,3 @@ const props = defineProps < {
 </template>
 
 
-<style lang="scss" scoped></style>
