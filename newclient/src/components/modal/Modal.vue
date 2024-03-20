@@ -41,8 +41,8 @@
             <!-- Footer -->
             <div class="flex flex-col gap-2 p-6">
                 <div class="flex flex-row items-center gap-4 w-full">
-                    <Button :disabled="disabled" :on-click="handleSubmit" :label="actionLabel"/>
-                    <Button v-if="secondaryAction && secondaryActionLabel" :disabled="disabled" :on-click="()=>secondaryAction" :label="secondaryActionLabel"/>
+                    <Button :disabled="disabled" @click="$emit('onSubmit')" :label="actionLabel"/>
+                    <Button v-if="secondaryActionLabel" :disabled="disabled" @click="$emit('onSecondaryAction')" :label="secondaryActionLabel"/>
                     <slot name="footer"></slot>
                 </div>
             </div>
@@ -53,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { watch,watchEffect, ref, type Ref } from 'vue';
+import {  ref, type Ref } from 'vue';
 import Button from "../Button.vue"
 
 interface Props {
@@ -61,40 +61,23 @@ interface Props {
     title?: string
     actionLabel: string
     secondaryActionLabel?: string
-    secondaryAction?: () => void
     disabled: boolean
-    onClose: () => void
-    onSubmit: () => void
 }
+const emit=defineEmits<{
+    onSecondaryAction?: []
+    onClose: []
+    onSubmit: []
+    onDisable: []
+}>()
 const props = defineProps<Props>()
 const showModal: Ref<boolean> = ref(props.isOpen)
-watchEffect(() => {
-    showModal.value = props.isOpen
-});
-watch(()=>[props.disabled, props.onClose], () => {
-    if (!props.disabled) {
-        return
-    }
-    showModal.value = false;
-    setTimeout(() => {
-        props.onClose()
-    }, 300);
-});
-watch([props.onSubmit, props.disabled],function handleSubmit () {
-    if (props.disabled) {
-        return
-    }
-    props.onSubmit()
-});
 
-watch([props.secondaryAction, props.disabled], () => {
-    if (props.disabled || !props.secondaryAction) {
-        return
-    }
-    props.secondaryAction()
-});
 function handleClose(){
     showModal.value=false
+    const timerId=setTimeout(()=>{
+        emit("onClose")
+        clearTimeout(timerId)
+    },300)
 }
 </script>
 

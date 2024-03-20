@@ -7,6 +7,7 @@ import Modal from './components/modal/Modal.vue'
 
 <template>
   <Navbar />
-  <Modal actionLabel="Submit" title="Login" :isOpen="true" />
+  <Modal :disabled="false" actionLabel="Submit" secondaryActionLabel="Login" title="Login" :isOpen="true" @on-submit="()=>console.log('Submit')"  @on-close="()=>console.log('Close') " @on-secondary-action="()=>console.log('Whatever?')"/>
+
   <RouterView />
 </template>
