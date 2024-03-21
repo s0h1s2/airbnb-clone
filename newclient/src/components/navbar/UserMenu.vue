@@ -1,16 +1,20 @@
 <script setup lang="ts">
 
 import MenuItem from './MenuItem.vue'
-import { ref } from "vue"
-const isOpen:Ref<boolean> = ref(false)
-function toggleMenu(){
-  isOpen.value=!isOpen.value
+import {useRegisterModal } from "../../stores/registerModal"
+
+import { ref, type Ref } from "vue"
+const registerModal = useRegisterModal()
+
+const isOpen: Ref<boolean> = ref(false)
+function toggleMenu() {
+  isOpen.value = !isOpen.value
 }
 
 </script>
 
 
-<template >
+<template>
   <div class="relative">
     <div class="flex flex-row items-center gap-3">
       <div class="hidden 
@@ -39,15 +43,15 @@ function toggleMenu(){
         hover:shadow-md 
         transition">
         <v-icon name="pr-bars" />
-        <div  class="hidden md:block">
+        <div class="hidden md:block">
           <v-icon name="fa-user-alt" />
         </div>
       </div>
       <div v-if="isOpen"
         class="absolute rounded-xl shadow-md w-[40vw] md:w-3/4 bg-white overflow-hidden right-0 top-12 text-sm">
         <div class="flex flex-col cursor-pointer">
-          <MenuItem label="Sign in" on-click="" />
-          <MenuItem label="Sign up"  on-click=""/>
+          <MenuItem label="Sign in"  />
+          <MenuItem label="Sign up" @onClick="registerModal.onOpen()" />
         </div>
       </div>
     </div>
