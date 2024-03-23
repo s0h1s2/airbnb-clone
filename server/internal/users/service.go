@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	userAlredyExist    = errors.New("User already exist")
+	userAlredyExist    = errors.New("Email already exist")
 	invalidCredentials = errors.New("Invalid credentials")
 )
 
