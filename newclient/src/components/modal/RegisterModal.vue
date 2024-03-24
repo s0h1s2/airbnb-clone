@@ -21,7 +21,7 @@ import Heading from "../Heading.vue"
 import Input from "../inputs/Input.vue"
 import { z } from "zod"
 import { client } from "@/lib/client"
-import { useRegisterModal } from "@/stores/registerModal";
+import { useRegisterModalStore } from "@/stores/registerModal";
 import { toTypedSchema } from "@vee-validate/zod"
 import { useForm } from "vee-validate"
 import { useToast } from "vue-toastification"
@@ -35,7 +35,7 @@ const schema = z.object({
 
 const validationSchema = toTypedSchema(schema)
 const { handleSubmit,isSubmitting,setErrors } = useForm({ validationSchema: validationSchema })
-const registerModalStore = useRegisterModal()
+const registerModalStore = useRegisterModalStore()
 const toast = useToast()
 
 const onSubmit = handleSubmit((values) => {

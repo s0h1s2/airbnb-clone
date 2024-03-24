@@ -3,12 +3,15 @@ import { RouterView } from 'vue-router'
 import Navbar from './components/Navbar.vue'
 import RegisterModal from './components/modal/RegisterModal.vue'
 import LoginModal from './components/modal/LoginModal.vue'
-
 </script>
 
 <template>
-  <Navbar />
+  <header>
+    <Navbar />
+  </header>
   <RegisterModal />
   <LoginModal />
-  <RouterView />
+  <main class="pt-24 pb-20">
+    <RouterView />
+  </main>
 </template>

@@ -1,7 +1,7 @@
 <template>
   <div>
-    <Modal :isOpen="loginModal.isOpen" actionLabel="Continue" :disabled="isSubmitting"
-      @onClose="loginModal.onClose()" @onSubmit="onSubmit" >
+    <Modal :isOpen="loginModal.isOpen" actionLabel="Continue" :disabled="isSubmitting" @onClose="loginModal.onClose()"
+      @onSubmit="onSubmit">
       <template v-slot:body>
         <div class="flex flex-col gap-4">
           <Heading title="Welcome back!" subtitle="Login to your account!" />
@@ -20,10 +20,11 @@ import Heading from "../Heading.vue"
 import Input from "../inputs/Input.vue"
 import { z } from "zod"
 import { client } from "@/lib/client"
-import { useLoginModal } from "@/stores/loginModal";
+import { useLoginModalStore } from "@/stores/loginModal";
 import { toTypedSchema } from "@vee-validate/zod"
 import { useForm } from "vee-validate"
 import { useToast } from "vue-toastification"
+import { useUserStore } from "@/stores/userStore"
 
 const schema = z.object({
   email: z.string().email().min(1),
@@ -32,18 +33,19 @@ const schema = z.object({
 
 
 const validationSchema = toTypedSchema(schema)
-const { handleSubmit,isSubmitting,setErrors } = useForm({ validationSchema: validationSchema })
-const loginModal = useLoginModal()
+const { handleSubmit, isSubmitting, setErrors } = useForm({ validationSchema: validationSchema })
+const loginModal = useLoginModalStore()
 const toast = useToast()
+const userStore = useUserStore()
 
-const onSubmit = handleSubmit((values) => {
-  console.log(values)
-  // client.post("/users", values).then((r) => {
-    // toast.success("User registered successfuly")
-  // }).catch((e) => {
-    // setErrors(e.response.data.errors)
-    // toast.error("Something went wrong.")
-  // })
+const onSubmit = handleSubmit(async (values) => {
+  await userStore.login(values)
+  if (userStore.isAuth) {
+    toast.success("You are loggedin successfuly")
+    loginModal.onClose()
+  } else {
+    toast.error("Invalid credentials")
+  }
 })
 </script>
 

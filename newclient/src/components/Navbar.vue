@@ -15,10 +15,12 @@ import UserMenu from "./navbar/UserMenu.vue"
         </div>
       </Container>
     </div>
+    <Categories />
   </div>
 </template>
 
 <script lang="ts">
+import Categories from "./navbar/Categories.vue"
 
 </script>
 

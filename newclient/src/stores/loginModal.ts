@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref, type Ref } from "vue";
 
-export const useLoginModal= defineStore("loginModal", () => {
+export const useLoginModalStore= defineStore("loginModal", () => {
   const isOpen: Ref<boolean> = ref(false)
   function onOpen() {
     isOpen.value = true;
