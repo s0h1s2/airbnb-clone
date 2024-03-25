@@ -3,10 +3,11 @@
 import MenuItem from './MenuItem.vue'
 import { useRegisterModalStore } from "@/stores/registerModal"
 import { useLoginModalStore } from "@/stores/loginModal"
-
+import { useUserStore } from "@/stores/userStore"
 import { ref, type Ref } from "vue"
 const registerModal = useRegisterModalStore()
 const loginModal = useLoginModalStore()
+const userStore = useUserStore()
 
 const isOpen: Ref<boolean> = ref(false)
 function toggleMenu() {
@@ -48,13 +49,21 @@ function toggleMenu() {
         <v-icon name="pr-bars" />
         <div class="hidden md:block">
           <v-icon name="fa-user-alt" />
+          <span class="font-sembold text-sm pl-1">
+            {{ userStore?.user?.name }}
+          </span>
         </div>
       </div>
       <div v-if="isOpen"
         class="absolute rounded-xl shadow-md w-[40vw] md:w-3/4 bg-white overflow-hidden right-0 top-12 text-sm">
         <div class="flex flex-col cursor-pointer">
-          <MenuItem label="Sign in" @onClick="registerModal.onClose(); loginModal.onOpen()" />
-          <MenuItem label="Sign up" @onClick="loginModal.onClose(); registerModal.onOpen()" />
+          <template v-if="!userStore.user">
+            <MenuItem label="Sign in" @onClick="registerModal.onClose(); loginModal.onOpen()" />
+            <MenuItem label="Sign up" @onClick="loginModal.onClose(); registerModal.onOpen()" />
+          </template>
+          <template v-if="userStore?.user">
+            <MenuItem label="My Profile" @onClick="console.log('Show profile')" />
+          </template>
         </div>
       </div>
     </div>
