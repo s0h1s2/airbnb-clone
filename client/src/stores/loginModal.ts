@@ -1,13 +1,3 @@
-import { defineStore } from "pinia";
-import { ref, type Ref } from "vue";
+import { generateModalStore } from "@/util/generateModal";
 
-export const useLoginModalStore= defineStore("loginModal", () => {
-  const isOpen: Ref<boolean> = ref(false)
-  function onOpen() {
-    isOpen.value = true;
-  }
-  function onClose() {
-    isOpen.value = false;
-  }
-  return { isOpen, onOpen, onClose }
-})
+export const useLoginModalStore=generateModalStore("loginModal") 

@@ -27,11 +27,11 @@ func userRegisterRoute(ctx *gin.Context) {
 
 		return
 	}
-	user := UserModel{}
+	user := User{}
 	result := db.Db.Where("email = ?", json.Email).First(&user)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		// let's create the user
-		newUser := UserModel{Name: json.Name, Email: json.Email, Password: json.Password}
+		newUser := User{Name: json.Name, Email: json.Email, Password: json.Password}
 
 		newUser.HashPassword()
 
@@ -53,7 +53,7 @@ func userAuthRoute(ctx *gin.Context) {
 		})
 		return
 	}
-	user := UserModel{}
+	user := User{}
 	result := db.Db.Where("email = ?", json.Email).First(&user)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		ctx.JSON(http.StatusUnauthorized, common.ErrorApiResponse{Errors: invalidCredentials.Error(), StatusCode: http.StatusUnauthorized})

@@ -11,6 +11,9 @@
         </div>
 
       </template>
+      <template v-slot:footer>
+        <p class="mt-4 font-light text-center">Already have an account? <span @click="registerModalStore.onClose();loginModal.onOpen()" class="text-sky-500 cursor-pointer hover:text-sky-700">Login</span></p>
+      </template>
     </Modal>
   </div>
 </template>
@@ -25,6 +28,7 @@ import { useRegisterModalStore } from "@/stores/registerModal";
 import { toTypedSchema } from "@vee-validate/zod"
 import { useForm } from "vee-validate"
 import { useToast } from "vue-toastification"
+import { useLoginModalStore } from "@/stores/loginModal"
 
 const schema = z.object({
   email: z.string().email().min(1),
@@ -36,6 +40,7 @@ const schema = z.object({
 const validationSchema = toTypedSchema(schema)
 const { handleSubmit,isSubmitting,setErrors } = useForm({ validationSchema: validationSchema })
 const registerModalStore = useRegisterModalStore()
+const loginModal=useLoginModalStore()
 const toast = useToast()
 
 const onSubmit = handleSubmit((values) => {

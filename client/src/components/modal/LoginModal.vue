@@ -8,7 +8,9 @@
           <Input label="Email" name="email" placeholder="Enter your email" />
           <Input type="password" label="Password" name="password" placeholder="Enter your password" />
         </div>
-
+      </template>
+      <template v-slot:footer>
+        <p class="mt-4 text-center font-light">Don't have an account? <span @click="loginModal.onClose();registerModal.onOpen()" class="text-sky-500 cursor-pointer hover:text-sky-700">Register</span></p>
       </template>
     </Modal>
   </div>
@@ -19,12 +21,12 @@ import Modal from "./Modal.vue"
 import Heading from "../Heading.vue"
 import Input from "../inputs/Input.vue"
 import { z } from "zod"
-import { client } from "@/lib/client"
 import { useLoginModalStore } from "@/stores/loginModal";
 import { toTypedSchema } from "@vee-validate/zod"
 import { useForm } from "vee-validate"
 import { useToast } from "vue-toastification"
 import { useUserStore } from "@/stores/userStore"
+import { useRegisterModalStore } from "@/stores/registerModal";
 
 const schema = z.object({
   email: z.string().email().min(1),
@@ -33,8 +35,9 @@ const schema = z.object({
 
 
 const validationSchema = toTypedSchema(schema)
-const { handleSubmit, isSubmitting, setErrors } = useForm({ validationSchema: validationSchema })
+const { handleSubmit, isSubmitting} = useForm({ validationSchema: validationSchema })
 const loginModal = useLoginModalStore()
+const registerModal= useRegisterModalStore()
 const toast = useToast()
 const userStore = useUserStore()
 

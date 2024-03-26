@@ -47,8 +47,8 @@
                             <Button :disabled="disabled" @onClick="$emit('onSubmit')" :label="actionLabel" />
                             <Button v-if="secondaryActionLabel" :disabled="disabled" @click="$emit('onSecondaryAction')"
                                 :label="secondaryActionLabel" />
-                            <slot name="footer"></slot>
                         </div>
+                        <slot name="footer"></slot>
                     </div>
                 </div>
             </div>

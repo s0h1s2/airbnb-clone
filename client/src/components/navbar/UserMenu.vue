@@ -3,17 +3,27 @@
 import MenuItem from './MenuItem.vue'
 import { useRegisterModalStore } from "@/stores/registerModal"
 import { useLoginModalStore } from "@/stores/loginModal"
+import { useRentModalStore } from "@/stores/rentModalStore"
 import { useUserStore } from "@/stores/userStore"
 import { ref, type Ref } from "vue"
+import { useRouter } from 'vue-router'
 const registerModal = useRegisterModalStore()
 const loginModal = useLoginModalStore()
-const userStore = useUserStore()
+const rentModal= useRentModalStore()
 
+const userStore = useUserStore()
+const router=useRouter()
 const isOpen: Ref<boolean> = ref(false)
 function toggleMenu() {
   isOpen.value = !isOpen.value
 }
-
+function openRentModal(){
+  if (!userStore.isAuth) {
+      loginModal.onOpen()
+      return
+  } 
+  rentModal.onOpen()
+}
 </script>
 
 
@@ -21,7 +31,7 @@ function toggleMenu() {
   <div class="relative">
 
     <div class="flex flex-row items-center gap-3">
-      <div class="hidden 
+      <div @click="openRentModal" class="hidden 
         md:block 
         text-sm 
         font-semibold 
@@ -49,9 +59,6 @@ function toggleMenu() {
         <v-icon name="pr-bars" />
         <div class="hidden md:block">
           <v-icon name="fa-user-alt" />
-          <span class="font-sembold text-sm pl-1">
-            {{ userStore?.user?.name }}
-          </span>
         </div>
       </div>
       <div v-if="isOpen"
@@ -62,7 +69,12 @@ function toggleMenu() {
             <MenuItem label="Sign up" @onClick="loginModal.onClose(); registerModal.onOpen()" />
           </template>
           <template v-if="userStore?.user">
-            <MenuItem label="My Profile" @onClick="console.log('Show profile')" />
+            <MenuItem label="My Trips" @onClick="router.push({name:'trips'})" />
+            <MenuItem label="My Favorites" @onClick="router.push({name:'favorites'})" />
+            <MenuItem label="My Reservations" @onClick="router.push({name:'reservations'})" />
+            <MenuItem label="My Properties" @onClick="router.push({name:'properties'})" />
+            <hr/>
+            <MenuItem label="Signout" @onClick="console.log('Signout')" />
           </template>
         </div>
       </div>
