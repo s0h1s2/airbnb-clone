@@ -1,7 +1,7 @@
 <template>
   <div>
-    <Modal title="Aribnb Your Home" :isOpen="rentModal.isOpen" :actionLabel="isLastStep() ? 'Submit' : 'Next'"
-      :disabled="isSubmitting" @onClose="rentModal.onClose()" @onSubmit="isLastStep() ? onSubmit() : nextStep()">
+    <Modal title="Aribnb Your Home" :isOpen="rentModal.isOpen" :actionLabel="isLastStep() ? 'Create' : 'Next'"
+      :disabled="isSubmitting" @onClose="rentModal.onClose()" @onSubmit="isLastStep() ? onSubmit() : nextStep()" secondaryActionLabel="Back" @onSecondaryAction="backStep()">
       <template v-slot:body>
         <div class="flex flex-col gap-4">
           <Heading title="Rent Modal" subtitle="Login to your account!" />
@@ -43,7 +43,7 @@ enum Steps {
 }
 const currentStep: Ref<Steps> = ref(Steps.CATEGORY)
 const isLastStep = (): bool => {
-  return currentStep.value == Steps.END - Steps.START - 1
+  return currentStep.value+1 == Steps.END - Steps.START 
 }
 const schema = z.object({
   email: z.string().email().min(1),
@@ -51,12 +51,9 @@ const schema = z.object({
 })
 
 function nextStep() {
-  console.log(isLastStep())
   if (currentStep.value < Steps.END) {
     currentStep.value++
-    return
   }
-  currentStep.value = Steps.END - 1
 }
 
 function backStep() {
