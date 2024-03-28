@@ -8,8 +8,13 @@ import router from './router'
 import { OhVueIcon, addIcons } from 'oh-vue-icons'
 import { OiSearch, PrBars, FaUserAlt, MdClose, FaUmbrellaBeach, GiWindmill, MdVilla, GiMountains, FaSwimmingPool, GiCampingTent, GiCastle } from "oh-vue-icons/icons"
 import Toast from "vue-toastification"
-import "vue-toastification/dist/index.css";
+
+import VueSelect from "vue-select";
 import { useUserStore } from './stores/userStore'
+
+// CSS
+import "vue-toastification/dist/index.css";
+import "vue-select/dist/vue-select.css";
 
 const app = createApp(App)
 addIcons(OiSearch, PrBars, FaUserAlt, MdClose, FaUmbrellaBeach, GiWindmill, MdVilla, GiMountains, FaSwimmingPool, GiCampingTent, GiCastle)
@@ -29,4 +34,5 @@ router.beforeEach((route) => {
 })
 
 app.component("v-icon", OhVueIcon)
+app.component("v-select", VueSelect)
 app.mount('#app')
