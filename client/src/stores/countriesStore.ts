@@ -1,12 +1,7 @@
+import type { Country } from "@/types/country";
 import { defineStore } from "pinia";
 import countries from "world-countries";
-interface Country {
-    value: string,
-    label: string,
-    flag: string,
-    region: string,
-    latlang: [number, number],
-}
+
 const formattedCountries = countries.map<Country>((country) => ({
     value: country.cca2,
     label: country.name.common,
