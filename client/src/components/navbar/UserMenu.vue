@@ -74,7 +74,9 @@ function openRentModal(){
             <MenuItem label="My Reservations" @onClick="router.push({name:'reservations'})" />
             <MenuItem label="My Properties" @onClick="router.push({name:'properties'})" />
             <hr/>
+            <MenuItem label="Airbnb your home" @onClick="rentModal.onOpen()" />
             <MenuItem label="Signout" @onClick="console.log('Signout')" />
+            
           </template>
         </div>
       </div>

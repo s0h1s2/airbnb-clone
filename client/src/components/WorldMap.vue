@@ -1,24 +1,29 @@
 <template>
-    <div style="height:400px; width:400px">
-        <l-map ref="map" v-model:zoom="zoom" :center="[lat || 47.41322, lan || -1.219482]">
+        <l-map ref="map" v-model:zoom="zoom" :center="[lat,lan]">
             <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" layer-type="base"
                 name="OpenStreetMap"></l-tile-layer>
+          <l-marker :lat-lng="coords" draggable >
+            <l-popup>Property located here</l-popup>
+          </l-marker>
         </l-map>
-    </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue"
+import { ref, watch } from "vue"
 import "leaflet/dist/leaflet.css";
-import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png"
-import markerIcon from "leaflet/dist/images/marker-icon.png"
-import markerShadow from "leaflet/dist/images/marker-shadow.png"
+
 const zoom = ref(2)
-import { LMap, LTileLayer } from "@vue-leaflet/vue-leaflet";
-defineProps<{
-    lat: number | null,
-    lan: number | null
+import { LMap, LTileLayer,LMarker,LPopup } from "@vue-leaflet/vue-leaflet";
+const props=defineProps<{
+    lat: number,
+    lan: number 
 }>()
+
+const coords=ref([props.lat,props.lan] as L.LatLngExpression)
+watch(()=>[props.lan,props.lat],()=>{
+  coords.value=[props.lat,props.lan] as L.LatLngExpression
+})
+
 </script>
 
 <style scoped></style>

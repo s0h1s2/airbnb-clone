@@ -14,6 +14,7 @@ const props = defineProps<{
   iconName: string,
   selected?: boolean
 }>()
+
 </script>
 
 <style scoped></style>

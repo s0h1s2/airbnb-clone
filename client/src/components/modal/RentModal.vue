@@ -19,9 +19,18 @@
             <div class="flex flex-col gap-8">
               <Heading title="Where is your place located?" subtitle="Help guests find you!" />
               <CountrySelect v-model="selectedCountry" />
-              <WorldMap :lan= />
+              <div class="w-auto h-[35vh] rounded-lg">
+              <WorldMap :lan="selectedCountry?.latlang[1] || 40.737" :lat="selectedCountry?.latlang[0] || -73.923" />
+              </div>
             </div>
           </template>
+          <template v-if="currentStep == Steps.INFO">
+            <div class="flex flex-col gap-8">
+              <Heading title="Share some basics about your place" subtitle="What amenities do you have" />
+              <CounterInput title="Number of guests" subtitle="How many guests?"/>
+            </div>
+          </template>
+
         </div>
       </template>
       <template v-slot:footer></template>
@@ -43,6 +52,8 @@ import { type Ref, ref, readonly, watch } from "vue"
 import { CATEGORIES } from "@/constants/categories"
 import CategoryInput from "@/components/inputs/categoryinput.vue"
 import CountrySelect from "@/components/inputs/countryselect.vue"
+import CounterInput from "@/components/CounterInput.vue"
+
 import WorldMap from "@/components/WorldMap.vue"
 import type { Country } from "@/types/country"
 enum Steps {
