@@ -20,17 +20,24 @@
               <Heading title="Where is your place located?" subtitle="Help guests find you!" />
               <CountrySelect v-model="selectedCountry" />
               <div class="w-auto h-[35vh] rounded-lg">
-              <WorldMap :lan="selectedCountry?.latlang[1] || 40.737" :lat="selectedCountry?.latlang[0] || -73.923" />
+                <WorldMap :lan="selectedCountry?.latlang[1] || 40.737" :lat="selectedCountry?.latlang[0] || -73.923" />
               </div>
             </div>
           </template>
           <template v-if="currentStep == Steps.INFO">
             <div class="flex flex-col gap-8">
               <Heading title="Share some basics about your place" subtitle="What amenities do you have" />
-              <CounterInput title="Number of guests" subtitle="How many guests?"/>
+              <CounterInput title="Guests" subtitle="How many guests do you allow?" />
+              <CounterInput title="Rooms" subtitle="How many rooms do you have?" />
+              <CounterInput title="Bathrooms" subtitle="How many bathrooms do you have?" />
             </div>
           </template>
+          <template v-if="currentStep == Steps.IMAGES">
+            <div class="flex flex-col gap-8">
+              <Heading title="Add photos of your place" subtitle="Show your place what look like!" />
 
+            </div>
+          </template>
         </div>
       </template>
       <template v-slot:footer></template>

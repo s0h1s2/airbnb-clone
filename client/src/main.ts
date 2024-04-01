@@ -6,7 +6,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import { OhVueIcon, addIcons } from 'oh-vue-icons'
-import { OiSearch, PrBars, FaUserAlt, MdClose, FaUmbrellaBeach, GiWindmill, MdVilla, GiMountains, FaSwimmingPool, GiCampingTent, GiCastle } from "oh-vue-icons/icons"
+import { OiSearch, PrBars, FaUserAlt, MdClose, FaUmbrellaBeach, GiWindmill, MdVilla, GiMountains, FaSwimmingPool, GiCampingTent, GiCastle, HiSolidMinusSm, HiSolidPlusSm } from "oh-vue-icons/icons"
 import Toast from "vue-toastification"
 
 import VueSelect from "vue-select";
@@ -17,7 +17,7 @@ import "vue-toastification/dist/index.css";
 import "vue-select/dist/vue-select.css";
 
 const app = createApp(App)
-addIcons(OiSearch, PrBars, FaUserAlt, MdClose, FaUmbrellaBeach, GiWindmill, MdVilla, GiMountains, FaSwimmingPool, GiCampingTent, GiCastle)
+addIcons(OiSearch, PrBars, FaUserAlt, MdClose, FaUmbrellaBeach, GiWindmill, MdVilla, GiMountains, FaSwimmingPool, GiCampingTent, GiCastle,HiSolidMinusSm,HiSolidPlusSm)
 
 app.use(createPinia())
 app.use(router)

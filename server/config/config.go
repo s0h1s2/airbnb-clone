@@ -5,6 +5,11 @@ import "fmt"
 type jwtConfig struct {
 	JwtSecretKey string `env:"JWT_SECRET_KEY"`
 }
+type cloudinaryConfigs struct {
+	CloudName string `env:"CLOUDINARY_NAME"`
+	Key       string `env:"CLOUDINARY_KEY"`
+	Secret    string `env:"CLOUDINARY_SECRET"`
+}
 type databaseConfig struct {
 	User     string `env:"DB_USER"`
 	Password string `env:"DB_PASSWORD"`
@@ -13,8 +18,9 @@ type databaseConfig struct {
 	Port     uint16 `env:"DB_PORT"`
 }
 type config struct {
-	Jwt jwtConfig
-	Db  databaseConfig
+	Jwt        jwtConfig
+	Db         databaseConfig
+	Cloudinary cloudinaryConfigs
 }
 
 var Config config
