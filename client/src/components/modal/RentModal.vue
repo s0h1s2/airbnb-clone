@@ -35,7 +35,7 @@
           <template v-if="currentStep == Steps.IMAGES">
             <div class="flex flex-col gap-8">
               <Heading title="Add photos of your place" subtitle="Show your place what look like!" />
-              <ImageUpload />
+              <ImageUpload v-model="imageSrc" />
             </div>
           </template>
         </div>
@@ -75,6 +75,7 @@ enum Steps {
 }
 const selectedCategory: Ref<string> = ref(CATEGORIES[0].label)
 const currentStep: Ref<Steps> = ref(Steps.CATEGORY)
+const imageSrc: Ref<string | null> = ref(null)
 const isLastStep = (): boolean => {
   return currentStep.value + 1 == Steps.END - Steps.START
 }

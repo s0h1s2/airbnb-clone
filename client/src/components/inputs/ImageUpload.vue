@@ -6,19 +6,17 @@
     <div class="font-semibold text-lg">
       Click to upload
     </div>
-    <div v-if="imageSrc != null" class="absolute overflow-hidden inset-0 w-full h-auto">
-      <img :src="imageSrc" alt="Upload" class="w-full h-full object-cover object-center " />
+    <div v-if="image != null" class="absolute overflow-hidden inset-0 w-full h-auto">
+      <img :src="image" alt="Upload" class="w-full h-full object-cover object-center " />
     </div>
 
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, type Ref } from "vue"
-defineProps<{
-  imageSrc: string | null
-}>()
+import { onMounted, ref } from "vue"
 
+const image = defineModel<string | null>()
 
 const scriptLoaded = ref(false)
 const isDisabled = ref(false)
@@ -35,13 +33,13 @@ onMounted(() => {
   document.head.appendChild(script)
 
 })
-function processResults(error, result) {
+function processResults(error: any, result: any) {
   if (error || result.event == 'close') {
     isDisabled.value = false
     return
   }
   if (result && result.event == 'success') {
-    imageSrc.value = result.info.secure_url
+    image.value = result.info.secure_url
   }
 }
 function openUploadWidget() {
@@ -49,6 +47,7 @@ function openUploadWidget() {
     return
   }
   isDisabled.value = true
+  //@ts-ignore
   window?.cloudinary.openUploadWidget({
     cloudName: "dyek1w4dj",
     uploadPreset: "oassehvr",
