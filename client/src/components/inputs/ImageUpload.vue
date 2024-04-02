@@ -1,13 +1,27 @@
 <template>
-  <div>
+  <div
+    class="relative cursor-pointer hover:opacity-70 transition p-20 border-2 border-neutral-300 flex flex-col justify-center items-center gap-4 text-neutral-600"
+    @click="openUploadWidget" :style="{ 'pointer-events': isDisabled ? 'none' : 'auto' }">
+    <v-icon :scale="2" name="md-addphotoalternate-outlined"></v-icon>
+    <div class="font-semibold text-lg">
+      Click to upload
+    </div>
+    <div v-if="imageSrc != null" class="absolute overflow-hidden inset-0 w-full h-auto">
+      <img :src="imageSrc" alt="Upload" class="w-full h-full object-cover object-center " />
+    </div>
 
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue"
-const scriptLoaded = ref(false)
+import { onMounted, ref, type Ref } from "vue"
+defineProps<{
+  imageSrc: string | null
+}>()
 
+
+const scriptLoaded = ref(false)
+const isDisabled = ref(false)
 onMounted(() => {
   const script = document.createElement('script')
   script.setAttribute('async', '')
@@ -19,8 +33,32 @@ onMounted(() => {
     console.error('Failed to load third-party script.')
   }
   document.head.appendChild(script)
-  // window!.cloudinary!.openUploadWidget()
+
 })
+function processResults(error, result) {
+  if (error || result.event == 'close') {
+    isDisabled.value = false
+    return
+  }
+  if (result && result.event == 'success') {
+    imageSrc.value = result.info.secure_url
+  }
+}
+function openUploadWidget() {
+  if (!scriptLoaded) {
+    return
+  }
+  isDisabled.value = true
+  window?.cloudinary.openUploadWidget({
+    cloudName: "dyek1w4dj",
+    uploadPreset: "oassehvr",
+    sources: ['local', 'url'],
+    clientAllowedFormats: ['image'],
+    resourceType: 'image',
+    maxFiles: 1
+
+  }, processResults)
+}
 </script>
 
 <style scoped></style>

@@ -20,7 +20,7 @@
               <Heading title="Where is your place located?" subtitle="Help guests find you!" />
               <CountrySelect v-model="selectedCountry" />
               <div class="w-auto h-[35vh] rounded-lg">
-                <WorldMap :lan="selectedCountry?.latlang[1] || 40.737" :lat="selectedCountry?.latlang[0] || -73.923" />
+                <WorldMap :lan="selectedCountry?.latlang[1] || 0" :lat="selectedCountry?.latlang[0] || 0" />
               </div>
             </div>
           </template>
@@ -35,7 +35,7 @@
           <template v-if="currentStep == Steps.IMAGES">
             <div class="flex flex-col gap-8">
               <Heading title="Add photos of your place" subtitle="Show your place what look like!" />
-
+              <ImageUpload />
             </div>
           </template>
         </div>
@@ -60,7 +60,7 @@ import { CATEGORIES } from "@/constants/categories"
 import CategoryInput from "@/components/inputs/categoryinput.vue"
 import CountrySelect from "@/components/inputs/countryselect.vue"
 import CounterInput from "@/components/CounterInput.vue"
-
+import ImageUpload from "@/components/inputs/ImageUpload.vue"
 import WorldMap from "@/components/WorldMap.vue"
 import type { Country } from "@/types/country"
 enum Steps {
