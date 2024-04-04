@@ -20,24 +20,40 @@
               <Heading title="Where is your place located?" subtitle="Help guests find you!" />
               <CountrySelect v-model="selectedCountry" />
               <div class="w-auto h-[35vh] rounded-lg">
-                <WorldMap :lan="selectedCountry?.latlang[1] || 0" :lat="selectedCountry?.latlang[0] || 0" />
+                <WorldMap :lan="selectedCountry?.latlang[1] || 0" :lat="selectedCountry?.latlang[0] || 0"
+                  @onCoordChange="(l) => { locationCoord = l }" />
               </div>
             </div>
           </template>
           <template v-if="currentStep == Steps.INFO">
             <div class="flex flex-col gap-8">
               <Heading title="Share some basics about your place" subtitle="What amenities do you have" />
-              <CounterInput title="Guests" subtitle="How many guests do you allow?" />
-              <CounterInput title="Rooms" subtitle="How many rooms do you have?" />
-              <CounterInput title="Bathrooms" subtitle="How many bathrooms do you have?" />
+              <CounterInput title="Guests" subtitle="How many guests do you allow?" name="guestCount" />
+              <CounterInput title="Rooms" subtitle="How many rooms do you have?" name="roomCount" />
+              <CounterInput title="Bathrooms" subtitle="How many bathrooms do you have?" name="bathroomCount" />
             </div>
           </template>
           <template v-if="currentStep == Steps.IMAGES">
             <div class="flex flex-col gap-8">
-              <Heading title="Add photos of your place" subtitle="Show your place what look like!" />
+              <Heading title="Add photo of your place" subtitle="Show your place what look like!" />
               <ImageUpload v-model="imageSrc" />
             </div>
           </template>
+          <template v-if="currentStep == Steps.DESCRIPTION">
+            <div class="flex flex-col gap-8">
+              <Heading title="How you describe your place?" subtitle="Short and sweet works best!" />
+              <Input name="title" label="Title" required />
+              <hr />
+              <Input name="description" label="Description" required />
+            </div>
+          </template>
+          <template v-if="currentStep == Steps.PRICE">
+            <div class="flex flex-col gap-8">
+              <Heading title="Now,set your price" subtitle="How much you charge for a night?" />
+              <Input name="price" label="Price" type="number" formatPrice required />
+            </div>
+          </template>
+
         </div>
       </template>
       <template v-slot:footer></template>
@@ -76,21 +92,33 @@ enum Steps {
 const selectedCategory: Ref<string> = ref(CATEGORIES[0].label)
 const currentStep: Ref<Steps> = ref(Steps.CATEGORY)
 const imageSrc: Ref<string | null> = ref(null)
+const rentModal = useRentModalStore()
+const categories = readonly(CATEGORIES)
+const selectedCountry = defineModel<Country>()
+const locationCoord: Ref<L.LatLngExpression | null> = ref(null)
+
+watch(imageSrc, () => {
+  setFieldValue('imageSrc', imageSrc?.value || "")
+})
+watch(locationCoord, () => {
+  setFieldValue("location", locationCoord.value?.toString())
+})
+
+
+const schema = z.object({
+  category: z.string().min(1),
+  title: z.string().min(1),
+  description: z.string().min(1),
+  guestCount: z.number().min(1).default(1),
+  roomCount: z.number(),
+  bathroomCount: z.number().default(1),
+  imageSrc: z.string().min(1),
+  price: z.number(),
+  location: z.string().min(1)
+})
 const isLastStep = (): boolean => {
   return currentStep.value + 1 == Steps.END - Steps.START
 }
-const schema = z.object({
-  category: z.string().min(1),
-  // title:z.string().min(1),
-  // description:z.string().min(1),
-  // guestCount:z.number().min(1),
-  // roomCount:z.number(),
-  // bathroomCount:z.number(),
-  // imageSrc:z.string(),
-  // price:z.number(),
-  // location:z.string().min(1)
-
-})
 
 function nextStep() {
   if (currentStep.value < Steps.END) {
@@ -103,15 +131,12 @@ function backStep() {
     currentStep.value--;
   }
 }
-
 const validationSchema = toTypedSchema(schema)
-const { handleSubmit, isSubmitting, setFieldValue } = useForm({})
+const { handleSubmit, isSubmitting, setFieldValue, errors } = useForm({ validationSchema })
 
-const rentModal = useRentModalStore()
-const categories = readonly(CATEGORIES)
-const selectedCountry = defineModel<Country>()
-
-
+watch(errors, () => {
+  console.log(errors)
+})
 const onSubmit = handleSubmit(async (values) => {
   console.log(values)
   console.log(selectedCountry.value)

@@ -48,6 +48,7 @@ function openUploadWidget() {
   }
   isDisabled.value = true
   //@ts-ignore
+
   window?.cloudinary.openUploadWidget({
     cloudName: "dyek1w4dj",
     uploadPreset: "oassehvr",

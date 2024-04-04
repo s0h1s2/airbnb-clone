@@ -5,17 +5,19 @@
         {{ title }}
       </div>
       <div class="font-light text-gray-600">
-        {{subtitle}}
+        {{ subtitle }}
       </div>
     </div>
     <div class="flex flex-row items-center gap-4">
-      <div @click="decreaseCounter()" class="w-10 h-10 rounded-full border-[1px] border-neutral-400 flex items-center justify-center text-neutral-600 cursor-pointer hover:opacity-80 transition">
+      <div @click="decreaseCounter()"
+        class="w-10 h-10 rounded-full border-[1px] border-neutral-400 flex items-center justify-center text-neutral-600 cursor-pointer hover:opacity-80 transition">
         <v-icon name="hi-solid-minus-sm"></v-icon>
       </div>
       <div class="font-light text-xl text-neutral-600 ">
-        {{counter}}
+        {{ counter }}
       </div>
-      <div @click="increaseCounter()" class="w-10 h-10 rounded-full border-[1px] border-neutral-400 flex items-center justify-center text-neutral-600 cursor-pointer hover:opacity-80 transition">
+      <div @click="increaseCounter()"
+        class="w-10 h-10 rounded-full border-[1px] border-neutral-400 flex items-center justify-center text-neutral-600 cursor-pointer hover:opacity-80 transition">
         <v-icon name="hi-solid-plus-sm"></v-icon>
       </div>
     </div>
@@ -24,32 +26,29 @@
 
 <script setup lang="ts">
 
+import { useField, useSetFieldValue } from 'vee-validate';
 import { ref } from 'vue';
-interface Props{
-  title:string
-  subtitle:string
+interface Props {
+  title: string
+  subtitle: string
+  name: string
 }
-defineProps<Props>()
+const props = defineProps<Props>()
 
-const emit=defineEmits<{
-  onChange:[number]
-}>()
+const { setValue } = useField(() => props.name)
+const counter = ref(1)
 
-
-const counter=ref(1)
-
-function increaseCounter(){
+function increaseCounter() {
   counter.value++
-  emit("onChange",counter.value)
+  setValue(counter.value)
+
 }
-function decreaseCounter(){
-  if (counter.value>1) {
+function decreaseCounter() {
+  if (counter.value > 1) {
     counter.value--
-    emit("onChange",counter.value)
+    setValue(counter.value)
   }
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
