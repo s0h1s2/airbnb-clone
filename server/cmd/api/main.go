@@ -49,5 +49,6 @@ func main() {
 	r.Use(CORSMiddleware())
 	v1 := r.Group("/api/v1/")
 	users.RegisterRoutes(v1)
+	listing.RegisterRoutes(v1)
 	r.Run()
 }

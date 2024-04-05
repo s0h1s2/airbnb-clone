@@ -48,9 +48,7 @@ func userRegisterRoute(ctx *gin.Context) {
 func userAuthRoute(ctx *gin.Context) {
 	var json loginUserRequest
 	if err := ctx.BindJSON(&json); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{Errors: err, StatusCode: http.StatusBadRequest})
 		return
 	}
 	user := User{}
@@ -68,6 +66,7 @@ func userAuthRoute(ctx *gin.Context) {
 	// create token
 	expireTime := time.Now().Add(1 * time.Hour)
 	claims := &common.UserClaims{
+		Uid:   user.ID,
 		Email: user.Email,
 		Name:  user.Name,
 		RegisteredClaims: jwt.RegisteredClaims{

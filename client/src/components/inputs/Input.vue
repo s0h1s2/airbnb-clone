@@ -3,7 +3,8 @@
     <div>
       <v-icon scale="1.4" class="text-neutral-700 absolute top-5 left-2" v-if="formatPrice" name="bi-currency-dollar" />
     </div>
-    <input v-model="value" :name="props.name" :type="props.type" :disabled="props.disabled" placeholder=" "
+    <input :value="value" v-model="value" :name="props.name" :type="props.type" :disabled="props.disabled"
+      placeholder=" "
       class="peer w-full p-4 pt-6 font-light bg-white border-2 rounded-md outline-none transition disabled:opacity-70 disabled:cursor-not-allowed"
       :class="[errorMessage ? 'border-rose-500 border-[1px]' : 'outline-none', formatPrice ? 'pl-9' : 'pl-4']" />
     <label :for="props.name"

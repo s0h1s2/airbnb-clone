@@ -26,8 +26,8 @@
 
 <script setup lang="ts">
 
-import { useField, useSetFieldValue } from 'vee-validate';
-import { ref } from 'vue';
+import { useField } from 'vee-validate';
+import { onMounted, ref } from 'vue';
 interface Props {
   title: string
   subtitle: string
@@ -36,6 +36,9 @@ interface Props {
 const props = defineProps<Props>()
 
 const { setValue } = useField(() => props.name)
+onMounted(() => {
+  setValue(1)
+})
 const counter = ref(1)
 
 function increaseCounter() {

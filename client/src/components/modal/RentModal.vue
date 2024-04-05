@@ -1,11 +1,11 @@
 <template>
   <div>
     <Modal title="Aribnb Your Home" :isOpen="rentModal.isOpen" :actionLabel="isLastStep() ? 'Create' : 'Next'"
-      :disabled="isSubmitting" @onClose="rentModal.onClose()" @onSubmit="isLastStep() ? onSubmit() : nextStep()"
-      secondaryActionLabel="Back" @onSecondaryAction="backStep()">
+      :disabled="isSubmitting" @onClose="rentModal.onClose()" @onSubmit="isLastStep
+      () ? onSubmit() : nextStep()" secondaryActionLabel="Back" @onSecondaryAction="backStep()">
       <template v-slot:body>
         <div class="flex flex-col gap-4">
-          <template v-if="currentStep == Steps.CATEGORY">
+          <div v-show="currentStep == Steps.CATEGORY">
             <Heading title="Which of these best describe your place" subtitle="Pick a category" />
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto">
               <div class="col-span-1" v-for="category in categories">
@@ -14,8 +14,8 @@
                   @onClick="(value) => { selectedCategory = value; setFieldValue('category', value) }" />
               </div>
             </div>
-          </template>
-          <template v-if="currentStep == Steps.LOCATION">
+          </div>
+          <div v-show="currentStep == Steps.LOCATION">
             <div class="flex flex-col gap-8">
               <Heading title="Where is your place located?" subtitle="Help guests find you!" />
               <CountrySelect v-model="selectedCountry" />
@@ -24,39 +24,38 @@
                   @onCoordChange="(l) => { locationCoord = l }" />
               </div>
             </div>
-          </template>
-          <template v-if="currentStep == Steps.INFO">
+          </div>
+          <div v-show="currentStep == Steps.INFO">
             <div class="flex flex-col gap-8">
               <Heading title="Share some basics about your place" subtitle="What amenities do you have" />
               <CounterInput title="Guests" subtitle="How many guests do you allow?" name="guestCount" />
               <CounterInput title="Rooms" subtitle="How many rooms do you have?" name="roomCount" />
               <CounterInput title="Bathrooms" subtitle="How many bathrooms do you have?" name="bathroomCount" />
             </div>
-          </template>
-          <template v-if="currentStep == Steps.IMAGES">
+          </div>
+          <div v-show="currentStep == Steps.IMAGES">
             <div class="flex flex-col gap-8">
               <Heading title="Add photo of your place" subtitle="Show your place what look like!" />
               <ImageUpload v-model="imageSrc" />
             </div>
-          </template>
-          <template v-if="currentStep == Steps.DESCRIPTION">
+          </div>
+          <div v-show="currentStep == Steps.DESCRIPTION">
             <div class="flex flex-col gap-8">
               <Heading title="How you describe your place?" subtitle="Short and sweet works best!" />
               <Input name="title" label="Title" required />
               <hr />
               <Input name="description" label="Description" required />
             </div>
-          </template>
-          <template v-if="currentStep == Steps.PRICE">
+          </div>
+          <div v-show="currentStep == Steps.PRICE">
             <div class="flex flex-col gap-8">
               <Heading title="Now,set your price" subtitle="How much you charge for a night?" />
               <Input name="price" label="Price" type="number" formatPrice required />
             </div>
-          </template>
+          </div>
 
         </div>
       </template>
-      <template v-slot:footer></template>
     </Modal>
   </div>
 </template>
@@ -66,10 +65,8 @@ import Modal from "./Modal.vue"
 import Heading from "../Heading.vue"
 import Input from "../inputs/Input.vue"
 import { z } from "zod"
-import { toTypedSchema } from "@vee-validate/zod"
 import { useForm } from "vee-validate"
 import { useToast } from "vue-toastification"
-import { useUserStore } from "@/stores/userStore"
 import { useRentModalStore } from "@/stores/rentModalStore";
 import { type Ref, ref, readonly, watch } from "vue"
 import { CATEGORIES } from "@/constants/categories"
@@ -96,7 +93,6 @@ const rentModal = useRentModalStore()
 const categories = readonly(CATEGORIES)
 const selectedCountry = defineModel<Country>()
 const locationCoord: Ref<L.LatLngExpression | null> = ref(null)
-
 watch(imageSrc, () => {
   setFieldValue('imageSrc', imageSrc?.value || "")
 })
@@ -104,42 +100,41 @@ watch(locationCoord, () => {
   setFieldValue("location", locationCoord.value?.toString())
 })
 
+type FormData = {
+  category: string
+  title: string
+  description: string
+  guestCount: number
+  roomCount: number
+  bathroomCount: number
+  imageSrc: string
+  price: number
+  location: string | null
+}
+const { handleSubmit, isSubmitting, setFieldValue } = useForm<FormData>()
 
-const schema = z.object({
-  category: z.string().min(1),
-  title: z.string().min(1),
-  description: z.string().min(1),
-  guestCount: z.number().min(1).default(1),
-  roomCount: z.number(),
-  bathroomCount: z.number().default(1),
-  imageSrc: z.string().min(1),
-  price: z.number(),
-  location: z.string().min(1)
-})
 const isLastStep = (): boolean => {
   return currentStep.value + 1 == Steps.END - Steps.START
 }
 
-function nextStep() {
+const nextStep = () => {
   if (currentStep.value < Steps.END) {
     currentStep.value++
   }
 }
 
-function backStep() {
-  if (currentStep.value > Steps.START) {
+
+const backStep = () => {
+  if (currentStep.value > Steps.START + 1) {
     currentStep.value--;
   }
 }
-const validationSchema = toTypedSchema(schema)
-const { handleSubmit, isSubmitting, setFieldValue, errors } = useForm({ validationSchema })
 
-watch(errors, () => {
-  console.log(errors)
-})
-const onSubmit = handleSubmit(async (values) => {
-  console.log(values)
-  console.log(selectedCountry.value)
+
+
+const onSubmit = handleSubmit(async (data) => {
+
+  console.log(data)
   console.log("Submit Handle")
 })
 </script>
