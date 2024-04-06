@@ -2,7 +2,8 @@
   <l-map :use-global-leaflet="false" ref="map" v-model:zoom="zoom" :center="[lat, lan]">
     <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" layer-type="base"
       name="OpenStreetMap"></l-tile-layer>
-    <l-marker :lat-lng="coords" draggable>
+    <l-marker :lat-lng="coords" @moveend="(v) => { emit('onCoordChange', v.target._latlng as L.LatLngExpression) }"
+      draggable>
       <l-popup>Property located here</l-popup>
     </l-marker>
   </l-map>
@@ -10,7 +11,6 @@
 
 <script setup lang="ts">
 
-import "leaflet/dist/leaflet.css";
 import { ref, watch } from "vue"
 import { LMap, LTileLayer, LMarker, LPopup } from "@vue-leaflet/vue-leaflet";
 
@@ -23,11 +23,14 @@ const props = defineProps<{
 const emit = defineEmits<{ onCoordChange: [L.LatLngExpression] }>()
 const coords = ref([props.lat, props.lan] as L.LatLngExpression)
 watch(() => [props.lan, props.lat], () => {
+  console.log("Hello?")
   coords.value = [props.lat, props.lan] as L.LatLngExpression
 })
-watch(coords, () => {
-  emit('onCoordChange', coords.value)
+watch(() => coords, (newCoords) => {
+  console.log("Hello?")
+  emit('onCoordChange', newCoords.value)
 })
+
 
 
 </script>

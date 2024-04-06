@@ -21,7 +21,7 @@
               <CountrySelect v-model="selectedCountry" />
               <div class="w-auto h-[35vh] rounded-lg">
                 <WorldMap :lan="selectedCountry?.latlang[1] || 0" :lat="selectedCountry?.latlang[0] || 0"
-                  @onCoordChange="(l) => { locationCoord = l }" />
+                  @onCoordChange="(l) => { locationCoord = l; setFieldValue('location', l) }" />
               </div>
             </div>
           </div>
@@ -76,6 +76,7 @@ import CounterInput from "@/components/CounterInput.vue"
 import ImageUpload from "@/components/inputs/ImageUpload.vue"
 import WorldMap from "@/components/WorldMap.vue"
 import type { Country } from "@/types/country"
+import { client } from "@/lib/client"
 enum Steps {
   START,
   CATEGORY,
@@ -92,13 +93,12 @@ const imageSrc: Ref<string | null> = ref(null)
 const rentModal = useRentModalStore()
 const categories = readonly(CATEGORIES)
 const selectedCountry = defineModel<Country>()
-const locationCoord: Ref<L.LatLngExpression | null> = ref(null)
+const locationCoord: Ref<L.LatLngExpression> = ref([0, 0])
+const toast = useToast()
 watch(imageSrc, () => {
   setFieldValue('imageSrc', imageSrc?.value || "")
 })
-watch(locationCoord, () => {
-  setFieldValue("location", locationCoord.value?.toString())
-})
+
 
 type FormData = {
   category: string
@@ -109,9 +109,15 @@ type FormData = {
   bathroomCount: number
   imageSrc: string
   price: number
-  location: string | null
+  location: L.LatLngExpression
 }
-const { handleSubmit, isSubmitting, setFieldValue } = useForm<FormData>()
+const { handleSubmit, isSubmitting, setFieldValue } = useForm<FormData>({
+  initialValues: {
+    category: CATEGORIES[0].label,
+    location: { lat: 0, lng: 0 } as L.LatLngExpression,
+  }
+
+})
 
 const isLastStep = (): boolean => {
   return currentStep.value + 1 == Steps.END - Steps.START
@@ -133,9 +139,13 @@ const backStep = () => {
 
 
 const onSubmit = handleSubmit(async (data) => {
-
+  await client.post("/listing", data).then(() => {
+    toast.success("Listing created successfully")
+    rentModal.onClose()
+  }).catch(() => {
+    toast.error("Unable to create listing. Please try again")
+  })
   console.log(data)
-  console.log("Submit Handle")
 })
 </script>
 

@@ -15,6 +15,7 @@ import { useUserStore } from './stores/userStore'
 // CSS
 import "vue-toastification/dist/index.css";
 import "vue-select/dist/vue-select.css";
+import "leaflet/dist/leaflet.css";
 
 const app = createApp(App)
 addIcons(OiSearch, PrBars, FaUserAlt, MdClose, FaUmbrellaBeach, GiWindmill, MdVilla, GiMountains, FaSwimmingPool, GiCampingTent, GiCastle, HiSolidMinusSm, HiSolidPlusSm, MdAddphotoalternateOutlined, BiCurrencyDollar)

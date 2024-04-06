@@ -21,7 +21,7 @@ func createNewListing(ctx *gin.Context) {
 		return
 	}
 	userClaims := user.(common.UserClaims)
-	listing := Listing{Title: json.Title, Price: json.Price, Category: json.Category, Imagesrc: json.ImageSrc, Location: json.Location, Roomcount: json.RoomCount, Description: json.Description, GuestCount: json.GuestCount, BathroomCount: json.BathroomCount, UserId: userClaims.Uid}
+	listing := Listing{Title: json.Title, Price: json.Price, Category: json.Category, Imagesrc: json.ImageSrc, Location: json.Location.String(), Roomcount: json.RoomCount, Description: json.Description, GuestCount: json.GuestCount, BathroomCount: json.BathroomCount, UserId: userClaims.Uid}
 	result := db.Db.Create(&listing)
 	if result.Error != nil {
 		ctx.AbortWithStatus(http.StatusInternalServerError)
