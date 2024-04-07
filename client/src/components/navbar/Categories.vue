@@ -3,7 +3,8 @@
     <Container>
       <div class="pt-4 flex flex-row items-center justify-between overflow-x-auto">
         <CategoryBox v-for="category in categories" :label="category.label" :iconName="category.iconName"
-          :selected="false" />
+          :selected="route.query.category == category.label"
+          @onSelect="(label) => router.push({ path: '/', query: { 'category': label } })" />
       </div>
     </Container>
 
@@ -15,9 +16,10 @@ import { ref } from "vue"
 import Container from "../Container.vue"
 import CategoryBox from "../CategoryBox.vue"
 import { CATEGORIES } from "@/constants/categories"
-import { useRoute } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
 const categories = ref(CATEGORIES)
 const route = useRoute()
+const router = useRouter()
 
 </script>
 

@@ -64,7 +64,7 @@
 import Modal from "./Modal.vue"
 import Heading from "../Heading.vue"
 import Input from "../inputs/Input.vue"
-import { z } from "zod"
+import { z, type ZodTypeAny } from "zod"
 import { useForm } from "vee-validate"
 import { useToast } from "vue-toastification"
 import { useRentModalStore } from "@/stores/rentModalStore";
@@ -77,6 +77,7 @@ import ImageUpload from "@/components/inputs/ImageUpload.vue"
 import WorldMap from "@/components/WorldMap.vue"
 import type { Country } from "@/types/country"
 import { client } from "@/lib/client"
+import { toTypedSchema } from "@vee-validate/zod"
 enum Steps {
   START,
   CATEGORY,
@@ -148,5 +149,3 @@ const onSubmit = handleSubmit(async (data) => {
   console.log(data)
 })
 </script>
-
-<style scoped></style>

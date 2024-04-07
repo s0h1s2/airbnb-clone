@@ -3,12 +3,12 @@ package listing
 import "fmt"
 
 type location struct {
-	lat float32
-	lng float32
+	Lat float32 `json:"lat"`
+	Lng float32 `json:"lng"`
 }
 
 func (loc location) String() string {
-	return fmt.Sprintf("%f,%f", loc.lat, loc.lng)
+	return fmt.Sprintf("%f,%f", loc.Lat, loc.Lng)
 }
 
 type createListingRequest struct {

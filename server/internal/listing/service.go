@@ -7,8 +7,22 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/s0h1s2/airbnb-clone/internal/common"
 	"github.com/s0h1s2/airbnb-clone/internal/db"
+	"gorm.io/gorm/clause"
 )
 
+func getListings(ctx *gin.Context) {
+	clauses := make([]clause.Expression, 0)
+
+	category, exists := ctx.GetQuery("category")
+	if exists {
+		clauses = append(clauses, clause.Like{Column: "category", Value: category})
+	}
+	listings := []Listing{}
+	db.Db.Clauses(clauses...).Order("ID desc").Find(&listings)
+	response := &listingsResponse{}
+	ctx.JSON(http.StatusOK, common.OkApiResponse{StatusCode: http.StatusOK, Data: response.Response(listings)})
+	return
+}
 func createNewListing(ctx *gin.Context) {
 	var json createListingRequest
 	if err := ctx.ShouldBindJSON(&json); err != nil {
