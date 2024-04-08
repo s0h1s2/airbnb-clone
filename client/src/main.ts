@@ -6,7 +6,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import { OhVueIcon, addIcons } from 'oh-vue-icons'
-import { OiSearch, PrBars, FaUserAlt, MdClose, FaUmbrellaBeach, GiWindmill, MdVilla, GiMountains, FaSwimmingPool, GiCampingTent, GiCastle, HiSolidMinusSm, HiSolidPlusSm, MdAddphotoalternateOutlined, BiCurrencyDollar } from "oh-vue-icons/icons"
+import { OiSearch, PrBars, FaUserAlt, MdClose, FaUmbrellaBeach, GiWindmill, MdVilla, GiMountains, FaSwimmingPool, GiCampingTent, GiCastle, HiSolidMinusSm, HiSolidPlusSm, MdAddphotoalternateOutlined, BiCurrencyDollar, PrSpinner } from "oh-vue-icons/icons"
 import Toast from "vue-toastification"
 
 import VueSelect from "vue-select";
@@ -18,7 +18,8 @@ import "vue-select/dist/vue-select.css";
 import "leaflet/dist/leaflet.css";
 
 const app = createApp(App)
-addIcons(OiSearch, PrBars, FaUserAlt, MdClose, FaUmbrellaBeach, GiWindmill, MdVilla, GiMountains, FaSwimmingPool, GiCampingTent, GiCastle, HiSolidMinusSm, HiSolidPlusSm, MdAddphotoalternateOutlined, BiCurrencyDollar)
+addIcons(OiSearch, PrBars, FaUserAlt, MdClose, FaUmbrellaBeach, GiWindmill, MdVilla, GiMountains, FaSwimmingPool, GiCampingTent, GiCastle, HiSolidMinusSm, HiSolidPlusSm, MdAddphotoalternateOutlined, BiCurrencyDollar, PrSpinner)
+
 
 
 app.use(createPinia())
