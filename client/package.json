@@ -18,6 +18,7 @@
     "@types/vue-select": "^3.16.8",
     "@vee-validate/zod": "^4.12.6",
     "axios": "^1.6.8",
+    "date-fns": "^3.6.0",
     "oh-vue-icons": "^1.0.0-rc3",
     "pinia": "^2.1.7",
     "vee-validate": "^4.12.6",

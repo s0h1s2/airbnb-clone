@@ -13,6 +13,7 @@ type locationResponse struct {
 	Lng string `json:"lng"`
 }
 type listingsResponse struct {
+	Id            uint             `json:"id"`
 	Title         string           `json:"title"`
 	Description   string           `json:"description"`
 	ImageSrc      string           `json:"imageSrc"`
@@ -28,6 +29,7 @@ func (l *listingsResponse) Response(listings []Listing) (response []listingsResp
 	for _, listing := range listings {
 		lat, lng, _ := strings.Cut(listing.Location, ",")
 		listingResponse := listingsResponse{
+			Id:            listing.ID,
 			Title:         listing.Title,
 			Description:   listing.Description,
 			ImageSrc:      listing.Imagesrc,
