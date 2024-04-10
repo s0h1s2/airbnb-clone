@@ -2,7 +2,7 @@
   <div>
     <Modal title="Aribnb Your Home" :isOpen="rentModal.isOpen" :actionLabel="isLastStep() ? 'Create' : 'Next'"
       :disabled="isSubmitting" @onClose="rentModal.onClose()" @onSubmit="isLastStep
-      () ? onSubmit() : nextStep()" secondaryActionLabel="Back" @onSecondaryAction="backStep()">
+        () ? onSubmit() : nextStep()" secondaryActionLabel="Back" @onSecondaryAction="backStep()">
       <template v-slot:body>
         <div class="flex flex-col gap-4">
           <div v-show="currentStep == Steps.CATEGORY">
@@ -21,7 +21,7 @@
               <CountrySelect v-model="selectedCountry" />
               <div class="w-auto h-[35vh] rounded-lg">
                 <WorldMap :lan="selectedCountry?.latlang[1] || 0" :lat="selectedCountry?.latlang[0] || 0"
-                  @onCoordChange="(l) => { locationCoord = l; setFieldValue('location', l) }" />
+                  @onCoordChange="(l) => { locationCoord = l; setFieldValue('location', l); }" />
               </div>
             </div>
           </div>
@@ -64,7 +64,6 @@
 import Modal from "./Modal.vue"
 import Heading from "../Heading.vue"
 import Input from "../inputs/Input.vue"
-import { z, type ZodTypeAny } from "zod"
 import { useForm } from "vee-validate"
 import { useToast } from "vue-toastification"
 import { useRentModalStore } from "@/stores/rentModalStore";
@@ -77,7 +76,6 @@ import ImageUpload from "@/components/inputs/ImageUpload.vue"
 import WorldMap from "@/components/WorldMap.vue"
 import type { Country } from "@/types/country"
 import { client } from "@/lib/client"
-import { toTypedSchema } from "@vee-validate/zod"
 enum Steps {
   START,
   CATEGORY,
@@ -100,6 +98,15 @@ watch(imageSrc, () => {
   setFieldValue('imageSrc', imageSrc?.value || "")
 })
 
+watch(selectedCountry, () => {
+  console.log(selectedCountry.value?.value)
+  if (!selectedCountry.value) {
+    return "DE"
+  }
+  setFieldValue('country', selectedCountry.value?.value)
+})
+
+
 
 type FormData = {
   category: string
@@ -111,11 +118,14 @@ type FormData = {
   imageSrc: string
   price: number
   location: L.LatLngExpression
+  country: string
 }
+
 const { handleSubmit, isSubmitting, setFieldValue } = useForm<FormData>({
   initialValues: {
     category: CATEGORIES[0].label,
     location: { lat: 0, lng: 0 } as L.LatLngExpression,
+    country: "DE"
   }
 
 })
@@ -125,16 +135,16 @@ const isLastStep = (): boolean => {
 }
 
 const nextStep = () => {
-  if (currentStep.value < Steps.END) {
+  if (currentStep.value < Steps.END)
     currentStep.value++
-  }
 }
 
 
+
 const backStep = () => {
-  if (currentStep.value > Steps.START + 1) {
+  if (currentStep.value > Steps.START + 1)
     currentStep.value--;
-  }
+
 }
 
 

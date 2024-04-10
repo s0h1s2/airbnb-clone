@@ -22,6 +22,7 @@ type listingsResponse struct {
 	BathroomCount int              `json:"bathroomCount"`
 	GuestCount    int              `json:"guestCount"`
 	Location      locationResponse `json:"location"`
+	Country       string           `json:"country"`
 	Price         float32          `json:"price"`
 }
 
@@ -38,6 +39,7 @@ func (l *listingsResponse) Response(listings []Listing) (response []listingsResp
 			Roomcount:     listing.Roomcount,
 			BathroomCount: listing.BathroomCount,
 			GuestCount:    listing.GuestCount,
+			Country:       listing.Country,
 			Location:      locationResponse{Lat: lat, Lng: lng},
 		}
 

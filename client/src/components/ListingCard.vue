@@ -8,7 +8,18 @@
           <HeartButton :listing-id="1" />
         </div>
       </div>
-      <div class="font-semibold text-lg"></div>
+      <div class="font-semibold text-lg">
+        {{ countryAndRegion }}
+      </div>
+      <div class="font-light text-neutral-500">
+        {{ reservationDate || listing.category }}
+      </div>
+      <div class="flex flex-row items-center gap-1">
+        <div class="font-semibold">
+          {{ totalPrice }}
+        </div>
+        <div v-if="!reservation" class="font-light">Night</div>
+      </div>
     </div>
   </div>
 </template>
@@ -19,6 +30,8 @@ import { format } from "date-fns"
 import { useRouter } from 'vue-router';
 import HeartButton from "./HeartButton.vue"
 import type { Listing } from '@/types/listing';
+import { useCountriesStore } from "@/stores/countriesStore"
+const countryStore = useCountriesStore()
 const props = defineProps<{
   listing: Listing
   reservation?: {
@@ -26,7 +39,17 @@ const props = defineProps<{
     endDate: string
   }
 }>()
+
+
+const country = countryStore.getByValue(props.listing.country)
+
 const router = useRouter()
+const countryAndRegion = computed(() => {
+  return `${country?.region},${country?.label}`
+})
+const totalPrice = computed(() => {
+  return `${props.listing.price}$`
+})
 const reservationDate = computed(() => {
   if (!props.reservation) {
     return

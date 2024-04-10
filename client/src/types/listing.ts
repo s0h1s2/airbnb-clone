@@ -5,5 +5,8 @@ export interface Listing {
   title: string
   description: string
   imageSrc: string
+  country: string
+  category: string
+  price: number
   location: PropertyLocation
 }

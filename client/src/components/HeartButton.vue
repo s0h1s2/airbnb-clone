@@ -3,7 +3,6 @@
     <v-icon scale="1.4" class="fill-white absolute -top-[2px] -right-[2px]" name="ri-heart-3-line"></v-icon>
     <v-icon scale="1.2" :class="[isFavorited ? 'fill-rose-500' : 'fill-neutral-500/70']"
       name="ri-heart-3-fill"></v-icon>
-
   </div>
 </template>
 

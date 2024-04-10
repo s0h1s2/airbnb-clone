@@ -21,4 +21,5 @@ type createListingRequest struct {
 	GuestCount    int      `json:"guestCount" binding:"required,number"`
 	Price         float32  `json:"price" binding:"required,numeric"`
 	Location      location `json:"location" binding:"required"`
+	Country       string   `json:"country" binding:"required"`
 }

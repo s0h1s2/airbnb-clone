@@ -16,6 +16,7 @@ type Listing struct {
 	GuestCount    int
 	Location      string
 	Price         float32
+	Country       string
 	UserId        uint
 	Reservations  []reservation.Reservation
 }

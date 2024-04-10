@@ -5,7 +5,7 @@ import Search from "./navbar/Search.vue"
 import UserMenu from "./navbar/UserMenu.vue"
 </script>
 <template>
-  <div class="fixed w-full bg-white shadow-sm">
+  <div class="fixed w-full bg-white shadow-sm z-50">
     <div class="py-4 border-b-[1px]">
       <Container>
         <div class="flex flex-row items-center justify-between gap-3 md:gap-0">
