@@ -1,13 +1,18 @@
 package listing
 
 import (
-	"log"
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/s0h1s2/airbnb-clone/internal/common"
 	"github.com/s0h1s2/airbnb-clone/internal/db"
+	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+)
+
+var (
+	lisitngNotFoundErr = errors.New("Listing not found.")
 )
 
 func getListings(ctx *gin.Context) {
@@ -29,12 +34,7 @@ func createNewListing(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{Errors: err.Error(), StatusCode: http.StatusBadRequest})
 		return
 	}
-	user, err := ctx.Get("user")
-	if !err {
-		log.Fatal("User doesn't exist in context")
-		return
-	}
-	userClaims := user.(common.UserClaims)
+	userClaims := common.GetUserClaimsFromContext(ctx)
 	listing := Listing{Title: json.Title, Price: json.Price, Category: json.Category, Imagesrc: json.ImageSrc, Location: json.Location.String(), Roomcount: json.RoomCount, Description: json.Description, GuestCount: json.GuestCount, BathroomCount: json.BathroomCount, UserId: userClaims.Uid, Country: json.Country}
 	result := db.Db.Create(&listing)
 	if result.Error != nil {
@@ -42,4 +42,16 @@ func createNewListing(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusCreated, common.OkApiResponse{Data: createListingResponse{}, StatusCode: http.StatusCreated})
+}
+func favoriteListing(ctx *gin.Context) {
+	listing := Listing{}
+	result := db.Db.Where("id=?", ctx.Param("id")).First(&listing)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{StatusCode: http.StatusBadRequest, Errors: lisitngNotFoundErr.Error()})
+		return
+	}
+	user := common.GetUserClaimsFromContext(ctx)
+
+	listing.favorite(user.Uid)
+	ctx.JSON(http.StatusOK, common.OkApiResponse{})
 }

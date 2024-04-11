@@ -6,6 +6,7 @@ import (
 )
 
 func RegisterRoutes(route gin.IRouter) {
-	route.GET("/listing",  getListings)
+	route.GET("/listing", getListings)
 	route.POST("/listing", middleware.IsAuth(), createNewListing)
+	route.POST("/listing/:id/favorite", middleware.IsAuth(), favoriteListing)
 }

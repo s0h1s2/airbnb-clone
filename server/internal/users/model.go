@@ -1,22 +1,20 @@
 package users
 
 import (
-	"time"
-
 	"github.com/s0h1s2/airbnb-clone/internal/listing"
 	"github.com/s0h1s2/airbnb-clone/internal/reservation"
 	"github.com/s0h1s2/airbnb-clone/internal/util"
+	"gorm.io/gorm"
 )
 
 type User struct {
-	ID           uint
+	gorm.Model
 	Name         string
 	Email        string
 	Password     string `json:"omitempty"`
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
 	Listings     []listing.Listing
 	Reservations []reservation.Reservation
+	Favorites    []listing.ListingFavorite
 }
 
 func (User) TableName() string {

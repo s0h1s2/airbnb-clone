@@ -99,10 +99,6 @@ watch(imageSrc, () => {
 })
 
 watch(selectedCountry, () => {
-  console.log(selectedCountry.value?.value)
-  if (!selectedCountry.value) {
-    return "DE"
-  }
   setFieldValue('country', selectedCountry.value?.value)
 })
 
@@ -125,7 +121,7 @@ const { handleSubmit, isSubmitting, setFieldValue } = useForm<FormData>({
   initialValues: {
     category: CATEGORIES[0].label,
     location: { lat: 0, lng: 0 } as L.LatLngExpression,
-    country: "DE"
+    country: ""
   }
 
 })

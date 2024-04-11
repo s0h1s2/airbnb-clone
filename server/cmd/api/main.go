@@ -31,6 +31,7 @@ func CORSMiddleware() gin.HandlerFunc {
 func migrateTables() {
 	db.Db.AutoMigrate(&users.User{})
 	db.Db.AutoMigrate(&listing.Listing{})
+	db.Db.AutoMigrate(&listing.ListingFavorite{})
 	db.Db.AutoMigrate(&reservation.Reservation{})
 
 }

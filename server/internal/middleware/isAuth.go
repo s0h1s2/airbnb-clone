@@ -21,7 +21,7 @@ func IsAuth() gin.HandlerFunc {
 			return []byte(config.Config.Jwt.JwtSecretKey), nil
 		})
 		if err != nil {
-			ctx.AbortWithError(http.StatusBadRequest, err)
+			ctx.AbortWithError(http.StatusUnauthorized, err)
 			return
 		}
 		if !tk.Valid {
