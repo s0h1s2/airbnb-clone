@@ -24,9 +24,9 @@ type Listing struct {
 }
 
 type ListingFavorite struct {
-	gorm.Model
-	ListingId uint `gorm:"uniqueIndex"`
-	UserId    uint `gorm:"uniqueIndex"`
+	gorm.Model `json:"-"`
+	ListingId  uint `gorm:"unique" json:"-"`
+	UserId     uint `gorm:"unique" json:"userId"`
 }
 
 func (l *Listing) favorite(user uint) {

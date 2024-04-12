@@ -12,18 +12,20 @@ type locationResponse struct {
 	Lat string `json:"lat"`
 	Lng string `json:"lng"`
 }
+
 type listingsResponse struct {
-	Id            uint             `json:"id"`
-	Title         string           `json:"title"`
-	Description   string           `json:"description"`
-	ImageSrc      string           `json:"imageSrc"`
-	Category      string           `json:"category"`
-	Roomcount     int              `json:"roomCount"`
-	BathroomCount int              `json:"bathroomCount"`
-	GuestCount    int              `json:"guestCount"`
-	Location      locationResponse `json:"location"`
-	Country       string           `json:"country"`
-	Price         float32          `json:"price"`
+	Id            uint              `json:"id"`
+	Title         string            `json:"title"`
+	Description   string            `json:"description"`
+	ImageSrc      string            `json:"imageSrc"`
+	Category      string            `json:"category"`
+	Roomcount     int               `json:"roomCount"`
+	BathroomCount int               `json:"bathroomCount"`
+	GuestCount    int               `json:"guestCount"`
+	Location      locationResponse  `json:"location"`
+	Country       string            `json:"country"`
+	Price         float32           `json:"price"`
+	Favorites     []ListingFavorite `json:"favorites" gorm:"unique"`
 }
 
 func (l *listingsResponse) Response(listings []Listing) (response []listingsResponse) {
@@ -41,6 +43,7 @@ func (l *listingsResponse) Response(listings []Listing) (response []listingsResp
 			GuestCount:    listing.GuestCount,
 			Country:       listing.Country,
 			Location:      locationResponse{Lat: lat, Lng: lng},
+			Favorites:     listing.Favorites,
 		}
 
 		response = append(response, listingResponse)

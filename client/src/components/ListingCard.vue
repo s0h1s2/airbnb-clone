@@ -5,7 +5,7 @@
         <img :src="listing.imageSrc" class="object-cover w-full h-full group-hover:scale-110 transition"
           alt="Property photo">
         <div class="absolute top-3 right-3">
-          <HeartButton :listing-id="1" />
+          <HeartButton :listing-id="listing.id" :favorites="listing.favorites" :user-id="user?.id" />
         </div>
       </div>
       <div class="font-semibold text-lg">
@@ -30,8 +30,12 @@ import { format } from "date-fns"
 import { useRouter } from 'vue-router';
 import HeartButton from "./HeartButton.vue"
 import type { Listing } from '@/types/listing';
+import { storeToRefs } from "pinia"
 import { useCountriesStore } from "@/stores/countriesStore"
+import { useUserStore } from "@/stores/userStore"
 const countryStore = useCountriesStore()
+const userStore = useUserStore()
+
 const props = defineProps<{
   listing: Listing
   reservation?: {
@@ -39,7 +43,7 @@ const props = defineProps<{
     endDate: string
   }
 }>()
-
+const { user } = storeToRefs(userStore)
 
 const country = countryStore.getByValue(props.listing.country)
 

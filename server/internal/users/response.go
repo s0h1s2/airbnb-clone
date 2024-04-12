@@ -10,6 +10,7 @@ type userInfo struct {
 	Name  string `json:"name"`
 }
 type loginUserResponse struct {
+	Uid   uint   `json:"id"`
 	Email string `json:"email"`
 	Name  string `json:"name"`
 }

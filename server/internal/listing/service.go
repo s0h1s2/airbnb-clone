@@ -23,7 +23,7 @@ func getListings(ctx *gin.Context) {
 		clauses = append(clauses, clause.Like{Column: "category", Value: category})
 	}
 	listings := []Listing{}
-	db.Db.Clauses(clauses...).Order("ID desc").Find(&listings)
+	db.Db.Clauses(clauses...).Preload(clause.Associations).Order("ID desc").Find(&listings)
 	response := &listingsResponse{}
 	ctx.JSON(http.StatusOK, common.OkApiResponse{StatusCode: http.StatusOK, Data: response.Response(listings)})
 	return

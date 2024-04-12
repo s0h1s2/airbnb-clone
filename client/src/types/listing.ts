@@ -1,5 +1,7 @@
 import type { PropertyLocation } from "./location"
-
+export type ListingUserFavorites = {
+  userId: number
+}
 export interface Listing {
   id: number | string
   title: string
@@ -9,4 +11,5 @@ export interface Listing {
   category: string
   price: number
   location: PropertyLocation
+  favorites: ListingUserFavorites[]
 }

@@ -1,7 +1,9 @@
 import { client } from "@/lib/client";
 import type { OkResponseResult } from "@/types/response";
 import { defineStore, } from "pinia";
+
 interface User {
+  id: number
   name: string
   email: string
 }
