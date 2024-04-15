@@ -99,7 +99,7 @@ watch(imageSrc, () => {
 })
 
 watch(selectedCountry, () => {
-  setFieldValue('country', selectedCountry.value?.value)
+  setFieldValue('country', selectedCountry.value?.value || "")
 })
 
 

@@ -27,7 +27,35 @@ type listingsResponse struct {
 	Price         float32           `json:"price"`
 	Favorites     []ListingFavorite `json:"favorites" gorm:"unique"`
 }
+type listingResponse struct {
+	// ListingsId uint
+	// Email string
+	Title       string           `json:"title"`
+	Description string           `json:"description"`
+	ImageSrc    string           `json:"imageSrc"`
+	Name        string           `json:"username"`
+	Country     string           `json:"country"`
+	Location    locationResponse `json:"location"`
+	Email       string           `json:"email"`
+}
+type listingWithOwnerInfo struct {
+	Listing
+	Name  string
+	Email string
+}
 
+func (l *listingResponse) Response(data listingWithOwnerInfo) listingResponse {
+	lat, lng, _ := strings.Cut(data.Location, ",")
+	return listingResponse{
+		Title:       data.Title,
+		ImageSrc:    data.Imagesrc,
+		Name:        data.Name,
+		Email:       data.Email,
+		Country:     data.Country,
+		Location:    locationResponse{Lat: lat, Lng: lng},
+		Description: data.Description,
+	}
+}
 func (l *listingsResponse) Response(listings []Listing) (response []listingsResponse) {
 	for _, listing := range listings {
 		lat, lng, _ := strings.Cut(listing.Location, ",")

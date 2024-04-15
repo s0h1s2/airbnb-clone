@@ -43,6 +43,16 @@ func createNewListing(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusCreated, common.OkApiResponse{Data: createListingResponse{}, StatusCode: http.StatusCreated})
 }
+func getListingById(ctx *gin.Context) {
+	result := listingWithOwnerInfo{}
+	queryResult := db.Db.Raw("SELECT * FROM listings INNER JOIN users as Users ON users.id=listings.user_id WHERE listings.id=?", ctx.Param("id")).Scan(&result)
+	if errors.Is(queryResult.Error, gorm.ErrRecordNotFound) {
+		ctx.JSON(http.StatusNotFound, common.ErrorApiResponse{StatusCode: http.StatusNotFound, Errors: lisitngNotFoundErr.Error()})
+		return
+	}
+	response := &listingResponse{}
+	ctx.JSON(http.StatusOK, common.OkApiResponse{Data: response.Response(result)})
+}
 func favoriteListing(ctx *gin.Context) {
 	listing := Listing{}
 	result := db.Db.Where("id=?", ctx.Param("id")).First(&listing)
