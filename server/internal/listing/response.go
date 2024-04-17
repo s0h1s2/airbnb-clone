@@ -28,8 +28,7 @@ type listingsResponse struct {
 	Favorites     []ListingFavorite `json:"favorites" gorm:"unique"`
 }
 type listingResponse struct {
-	// ListingsId uint
-	// Email string
+	Id          uint             `json:"id"`
 	Title       string           `json:"title"`
 	Description string           `json:"description"`
 	ImageSrc    string           `json:"imageSrc"`

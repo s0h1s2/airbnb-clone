@@ -6,7 +6,6 @@ import router from './router'
 import { OhVueIcon, addIcons } from 'oh-vue-icons'
 import { OiSearch, PrBars, FaUserAlt, MdClose, FaUmbrellaBeach, GiWindmill, MdVilla, GiMountains, FaSwimmingPool, GiCampingTent, GiCastle, HiSolidMinusSm, HiSolidPlusSm, MdAddphotoalternateOutlined, BiCurrencyDollar, PrSpinner, RiHeart3Line, RiHeart3Fill } from "oh-vue-icons/icons"
 import Toast from "vue-toastification"
-
 import VueSelect from "vue-select";
 import { useUserStore } from './stores/userStore'
 

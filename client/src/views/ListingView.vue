@@ -8,7 +8,19 @@
         <div class="flex flex-col gap-6">
           <ListingHead :id="listing?.id!" :title="listing?.title!" :imageSrc="listing?.imageSrc!"
             :location="listing?.location!" :country="listing?.country!" />
+          <div class="grid grid-cols-1 md:grid-cols-7 md:gap-10 mt-6">
+            <div class="col-span-4 flex flex-col gap-8">
+              <div class="flex flex-col gap-2">
+                <div class="text-xl font-semibold flex flex-row items-center gap-2">
+                  <div>
+                    Hosted by {{ listing?.username }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+
       </div>
     </Container>
   </template>
