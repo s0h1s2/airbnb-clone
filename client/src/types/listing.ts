@@ -12,6 +12,9 @@ export interface Listing {
   price: number
   location: PropertyLocation
   favorites: ListingUserFavorites[]
+  guestCount: number
+  roomCount: number
+  bathroomCount: number
   username: string
   email: string
 }

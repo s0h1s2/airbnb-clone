@@ -1,4 +1,4 @@
 export interface PropertyLocation {
-  lat: number
-  lan: number
+  lat: number | string
+  lng: number | string
 }

@@ -15,7 +15,46 @@
                   <div>
                     Hosted by {{ listing?.username }}
                   </div>
+                  <div>
+                    <v-icon scale="1.2" name="bi-person-circle"></v-icon>
+                  </div>
                 </div>
+                <div class="flex flex-row items-center gap-4 font-light text-neutral-500">
+                  <div>
+                    {{ listing?.guestCount }} guests
+                  </div>
+                  <div>
+
+                    {{ listing?.roomCount }} rooms
+                  </div>
+                  <div>
+                    {{ listing?.roomCount }} bathrooms
+                  </div>
+
+                </div>
+              </div>
+              <hr />
+              <div class="flex flex-col gap-6">
+                <div class="flex flex-row items-center gap-4">
+                  <v-icon class="text-neutral-600" :scale="2" :name="category?.iconName" />
+                  <div class="flex flex-col">
+                    <div class="text-lg font-semibold">
+                      {{ category?.label }}
+                    </div>
+                    <div class="text-neutral-500 font-light">
+                      {{ category?.description }}
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <hr />
+              <div class="text-lg font-light text-neutral-500">
+                {{ listing?.description }}
+              </div>
+              <hr />
+              <div class="w-[400px] h-[360px]">
+                <WorldMap :lat="Number(listing?.location.lat!)" :lan="Number(listing?.location.lng!)" />
               </div>
             </div>
           </div>
@@ -36,6 +75,7 @@ import type { OkResponseResult } from "@/types/response";
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import Container from "@/components/Container.vue"
 import ListingHead from "@/components/ListingHead.vue"
+import WorldMap from "@/components/WorldMap.vue"
 import { CATEGORIES } from "@/constants/categories";
 
 
@@ -44,7 +84,7 @@ const isLoaded: Ref<boolean> = ref(false)
 const route = useRoute()
 const router = useRouter()
 const category = computed(() => {
-  return CATEGORIES.filter((cat) => cat.label == listing.value?.category)
+  return CATEGORIES.find((cat) => cat.label == listing.value?.category)
 })
 watchEffect(async () => {
   await client.get<OkResponseResult<Listing>>(`listing/${route.params.id}`).then((r) => {

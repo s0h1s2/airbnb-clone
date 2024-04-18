@@ -28,14 +28,18 @@ type listingsResponse struct {
 	Favorites     []ListingFavorite `json:"favorites" gorm:"unique"`
 }
 type listingResponse struct {
-	Id          uint             `json:"id"`
-	Title       string           `json:"title"`
-	Description string           `json:"description"`
-	ImageSrc    string           `json:"imageSrc"`
-	Name        string           `json:"username"`
-	Country     string           `json:"country"`
-	Location    locationResponse `json:"location"`
-	Email       string           `json:"email"`
+	Id            uint             `json:"id"`
+	Title         string           `json:"title"`
+	Description   string           `json:"description"`
+	ImageSrc      string           `json:"imageSrc"`
+	Country       string           `json:"country"`
+	Location      locationResponse `json:"location"`
+	GuestCount    int              `json:"guestCount"`
+	RoomCount     int              `json:"roomCount"`
+	BathroomCount int              `json:"bathroomCount"`
+	Category      string           `json:"category"`
+	Name          string           `json:"username"`
+	Email         string           `json:"email"`
 }
 type listingWithOwnerInfo struct {
 	Listing
@@ -46,13 +50,17 @@ type listingWithOwnerInfo struct {
 func (l *listingResponse) Response(data listingWithOwnerInfo) listingResponse {
 	lat, lng, _ := strings.Cut(data.Location, ",")
 	return listingResponse{
-		Title:       data.Title,
-		ImageSrc:    data.Imagesrc,
-		Name:        data.Name,
-		Email:       data.Email,
-		Country:     data.Country,
-		Location:    locationResponse{Lat: lat, Lng: lng},
-		Description: data.Description,
+		Title:         data.Title,
+		ImageSrc:      data.Imagesrc,
+		Name:          data.Name,
+		Email:         data.Email,
+		Country:       data.Country,
+		Location:      locationResponse{Lat: lat, Lng: lng},
+		BathroomCount: data.BathroomCount,
+		GuestCount:    data.GuestCount,
+		RoomCount:     data.Roomcount,
+		Description:   data.Description,
+		Category:      data.Category,
 	}
 }
 func (l *listingsResponse) Response(listings []Listing) (response []listingsResponse) {

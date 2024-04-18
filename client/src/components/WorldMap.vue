@@ -17,17 +17,15 @@ import { LMap, LTileLayer, LMarker, LPopup } from "@vue-leaflet/vue-leaflet";
 const zoom = ref(2)
 
 const props = defineProps<{
-  lat: number,
+  lat: number
   lan: number
 }>()
 const emit = defineEmits<{ onCoordChange: [L.LatLngExpression] }>()
 const coords = ref([props.lat, props.lan] as L.LatLngExpression)
 watch(() => [props.lan, props.lat], () => {
-  console.log("Hello?")
   coords.value = [props.lat, props.lan] as L.LatLngExpression
 })
 watch(() => coords, (newCoords) => {
-  console.log("Hello?")
   emit('onCoordChange', newCoords.value)
 })
 
