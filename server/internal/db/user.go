@@ -1,8 +1,6 @@
-package users
+package db
 
 import (
-	"github.com/s0h1s2/airbnb-clone/internal/listing"
-	"github.com/s0h1s2/airbnb-clone/internal/reservation"
 	"github.com/s0h1s2/airbnb-clone/internal/util"
 	"gorm.io/gorm"
 )
@@ -12,9 +10,9 @@ type User struct {
 	Name         string
 	Email        string
 	Password     string `json:"omitempty"`
-	Listings     []listing.Listing
-	Reservations []reservation.Reservation
-	Favorites    []listing.ListingFavorite
+	Listings     []Listing
+	Reservations []Reservation
+	Favorites    []ListingFavorite
 }
 
 func (User) TableName() string {

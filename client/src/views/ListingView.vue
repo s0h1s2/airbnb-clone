@@ -13,7 +13,7 @@
               <div class="flex flex-col gap-2">
                 <div class="text-xl font-semibold flex flex-row items-center gap-2">
                   <div>
-                    Hosted by {{ listing?.username }}
+                    Hosted by {{ listing?.user.name }}
                   </div>
                   <div>
                     <v-icon scale="1.2" name="bi-person-circle"></v-icon>

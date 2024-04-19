@@ -22,7 +22,7 @@ func getListings(ctx *gin.Context) {
 	if exists {
 		clauses = append(clauses, clause.Like{Column: "category", Value: category})
 	}
-	listings := []Listing{}
+	listings := []db.Listing{}
 	db.Db.Clauses(clauses...).Preload(clause.Associations).Order("ID desc").Find(&listings)
 	response := &listingsResponse{}
 	ctx.JSON(http.StatusOK, common.OkApiResponse{StatusCode: http.StatusOK, Data: response.Response(listings)})
@@ -35,7 +35,7 @@ func createNewListing(ctx *gin.Context) {
 		return
 	}
 	userClaims := common.GetUserClaimsFromContext(ctx)
-	listing := Listing{Title: json.Title, Price: json.Price, Category: json.Category, Imagesrc: json.ImageSrc, Location: json.Location.String(), Roomcount: json.RoomCount, Description: json.Description, GuestCount: json.GuestCount, BathroomCount: json.BathroomCount, UserId: userClaims.Uid, Country: json.Country}
+	listing := db.Listing{Title: json.Title, Price: json.Price, Category: json.Category, Imagesrc: json.ImageSrc, Location: json.Location.String(), Roomcount: json.RoomCount, Description: json.Description, GuestCount: json.GuestCount, BathroomCount: json.BathroomCount, UserId: userClaims.Uid, Country: json.Country}
 	result := db.Db.Create(&listing)
 	if result.Error != nil {
 		ctx.AbortWithStatus(http.StatusInternalServerError)
@@ -44,8 +44,8 @@ func createNewListing(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, common.OkApiResponse{Data: createListingResponse{}, StatusCode: http.StatusCreated})
 }
 func getListingById(ctx *gin.Context) {
-	result := listingWithOwnerInfo{}
-	queryResult := db.Db.Raw("SELECT * FROM listings INNER JOIN users as Users ON users.id=listings.user_id WHERE listings.id=?", ctx.Param("id")).Scan(&result)
+	result := db.Listing{}
+	queryResult := db.Db.Preload("User").Preload("Reservations").First(&result, ctx.Param("id"))
 	if errors.Is(queryResult.Error, gorm.ErrRecordNotFound) {
 		ctx.JSON(http.StatusNotFound, common.ErrorApiResponse{StatusCode: http.StatusNotFound, Errors: lisitngNotFoundErr.Error()})
 		return
@@ -54,7 +54,7 @@ func getListingById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, common.OkApiResponse{Data: response.Response(result)})
 }
 func favoriteListing(ctx *gin.Context) {
-	listing := Listing{}
+	listing := db.Listing{}
 	result := db.Db.Where("id=?", ctx.Param("id")).First(&listing)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{StatusCode: http.StatusBadRequest, Errors: lisitngNotFoundErr.Error()})
@@ -62,6 +62,6 @@ func favoriteListing(ctx *gin.Context) {
 	}
 	user := common.GetUserClaimsFromContext(ctx)
 
-	listing.favorite(user.Uid)
+	listing.Favorite(user.Uid)
 	ctx.JSON(http.StatusOK, common.OkApiResponse{})
 }

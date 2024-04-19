@@ -2,6 +2,8 @@ package listing
 
 import (
 	"strings"
+
+	"github.com/s0h1s2/airbnb-clone/internal/db"
 )
 
 type createListingResponse struct {
@@ -14,18 +16,22 @@ type locationResponse struct {
 }
 
 type listingsResponse struct {
-	Id            uint              `json:"id"`
-	Title         string            `json:"title"`
-	Description   string            `json:"description"`
-	ImageSrc      string            `json:"imageSrc"`
-	Category      string            `json:"category"`
-	Roomcount     int               `json:"roomCount"`
-	BathroomCount int               `json:"bathroomCount"`
-	GuestCount    int               `json:"guestCount"`
-	Location      locationResponse  `json:"location"`
-	Country       string            `json:"country"`
-	Price         float32           `json:"price"`
-	Favorites     []ListingFavorite `json:"favorites" gorm:"unique"`
+	Id            uint                 `json:"id"`
+	Title         string               `json:"title"`
+	Description   string               `json:"description"`
+	ImageSrc      string               `json:"imageSrc"`
+	Category      string               `json:"category"`
+	Roomcount     int                  `json:"roomCount"`
+	BathroomCount int                  `json:"bathroomCount"`
+	GuestCount    int                  `json:"guestCount"`
+	Location      locationResponse     `json:"location"`
+	Country       string               `json:"country"`
+	Price         float32              `json:"price"`
+	Favorites     []db.ListingFavorite `json:"favorites" gorm:"unique"`
+}
+type userResponse struct {
+	Email string `json:"email"`
+	Name  string `json:"name"`
 }
 type listingResponse struct {
 	Id            uint             `json:"id"`
@@ -38,22 +44,18 @@ type listingResponse struct {
 	RoomCount     int              `json:"roomCount"`
 	BathroomCount int              `json:"bathroomCount"`
 	Category      string           `json:"category"`
-	Name          string           `json:"username"`
-	Email         string           `json:"email"`
-}
-type listingWithOwnerInfo struct {
-	Listing
-	Name  string
-	Email string
+	Reservations  []db.Reservation `json:"reservations"`
+	User          userResponse     `json:"user"`
 }
 
-func (l *listingResponse) Response(data listingWithOwnerInfo) listingResponse {
+func (l *listingResponse) Response(data db.Listing) listingResponse {
 	lat, lng, _ := strings.Cut(data.Location, ",")
 	return listingResponse{
-		Title:         data.Title,
-		ImageSrc:      data.Imagesrc,
-		Name:          data.Name,
-		Email:         data.Email,
+		Id:       data.ID,
+		Title:    data.Title,
+		ImageSrc: data.Imagesrc,
+		// Name:          data.Name,
+		// Email:         data.Email,
 		Country:       data.Country,
 		Location:      locationResponse{Lat: lat, Lng: lng},
 		BathroomCount: data.BathroomCount,
@@ -61,9 +63,11 @@ func (l *listingResponse) Response(data listingWithOwnerInfo) listingResponse {
 		RoomCount:     data.Roomcount,
 		Description:   data.Description,
 		Category:      data.Category,
+		Reservations:  data.Reservations,
+		User:          userResponse{Name: data.User.Name, Email: data.User.Email},
 	}
 }
-func (l *listingsResponse) Response(listings []Listing) (response []listingsResponse) {
+func (l *listingsResponse) Response(listings []db.Listing) (response []listingsResponse) {
 	for _, listing := range listings {
 		lat, lng, _ := strings.Cut(listing.Location, ",")
 		listingResponse := listingsResponse{

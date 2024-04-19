@@ -1,10 +1,6 @@
-package listing
+package db
 
-import (
-	"github.com/s0h1s2/airbnb-clone/internal/db"
-	"github.com/s0h1s2/airbnb-clone/internal/reservation"
-	"gorm.io/gorm"
-)
+import "gorm.io/gorm"
 
 type Listing struct {
 	gorm.Model
@@ -19,7 +15,8 @@ type Listing struct {
 	Price         float32
 	Country       string
 	UserId        uint
-	Reservations  []reservation.Reservation
+	User          User
+	Reservations  []Reservation
 	Favorites     []ListingFavorite
 }
 
@@ -29,6 +26,6 @@ type ListingFavorite struct {
 	UserId     uint `gorm:"unique" json:"userId"`
 }
 
-func (l *Listing) favorite(user uint) {
-	db.Db.Create(&ListingFavorite{ListingId: l.ID, UserId: user})
+func (l *Listing) Favorite(user uint) {
+	Db.Create(&ListingFavorite{ListingId: l.ID, UserId: user})
 }

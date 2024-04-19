@@ -1,4 +1,4 @@
-package reservation
+package db
 
 import (
 	"time"

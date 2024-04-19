@@ -9,7 +9,6 @@ import (
 	"github.com/s0h1s2/airbnb-clone/config"
 	"github.com/s0h1s2/airbnb-clone/internal/db"
 	"github.com/s0h1s2/airbnb-clone/internal/listing"
-	"github.com/s0h1s2/airbnb-clone/internal/reservation"
 	"github.com/s0h1s2/airbnb-clone/internal/users"
 )
 
@@ -29,10 +28,10 @@ func CORSMiddleware() gin.HandlerFunc {
 	}
 }
 func migrateTables() {
-	db.Db.AutoMigrate(&users.User{})
-	db.Db.AutoMigrate(&listing.Listing{})
-	db.Db.AutoMigrate(&listing.ListingFavorite{})
-	db.Db.AutoMigrate(&reservation.Reservation{})
+	db.Db.AutoMigrate(&db.User{})
+	db.Db.AutoMigrate(&db.Listing{})
+	db.Db.AutoMigrate(&db.ListingFavorite{})
+	db.Db.AutoMigrate(&db.Reservation{})
 
 }
 func main() {

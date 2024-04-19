@@ -2,6 +2,11 @@ import type { PropertyLocation } from "./location"
 export type ListingUserFavorites = {
   userId: number
 }
+interface User {
+  name: string
+  email: string
+}
+
 export interface Listing {
   id: number | string
   title: string
@@ -15,6 +20,5 @@ export interface Listing {
   guestCount: number
   roomCount: number
   bathroomCount: number
-  username: string
-  email: string
+  user: User
 }
