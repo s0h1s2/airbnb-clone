@@ -9,6 +9,7 @@
           <ListingHead :id="listing?.id!" :title="listing?.title!" :imageSrc="listing?.imageSrc!"
             :location="listing?.location!" :country="listing?.country!" />
           <div class="grid grid-cols-1 md:grid-cols-7 md:gap-10 mt-6">
+
             <div class="col-span-4 flex flex-col gap-8">
               <div class="flex flex-col gap-2">
                 <div class="text-xl font-semibold flex flex-row items-center gap-2">
@@ -57,9 +58,22 @@
                 <WorldMap :lat="Number(listing?.location.lat!)" :lan="Number(listing?.location.lng!)" />
               </div>
             </div>
+            <div class="order-first mb-10 md:order-last md:col-span-3">
+              <div class="bg-white rounded-xl border-[1px] border-neutral-200 overflow-hidden">
+                <div class="flex flex-row items-center gap-1 p-4">
+                  <div class="text-2xl font-semibold">
+                    $ {{ listing?.price }}
+                  </div>
+                  <div class="font-light text-neutral-600">
+                    Night
+                  </div>
+                </div>
+                <hr />
+              </div>
+              <ReservationDatePicker />
+            </div>
           </div>
         </div>
-
       </div>
     </Container>
   </template>
@@ -75,6 +89,7 @@ import type { OkResponseResult } from "@/types/response";
 import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import Container from "@/components/Container.vue"
 import ListingHead from "@/components/ListingHead.vue"
+import ReservationDatePicker from "@/components/ReservationDatePicker.vue"
 import WorldMap from "@/components/WorldMap.vue"
 import { CATEGORIES } from "@/constants/categories";
 

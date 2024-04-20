@@ -44,6 +44,7 @@ type listingResponse struct {
 	RoomCount     int              `json:"roomCount"`
 	BathroomCount int              `json:"bathroomCount"`
 	Category      string           `json:"category"`
+	Price         float32          `json:"price"`
 	Reservations  []db.Reservation `json:"reservations"`
 	User          userResponse     `json:"user"`
 }
@@ -51,11 +52,9 @@ type listingResponse struct {
 func (l *listingResponse) Response(data db.Listing) listingResponse {
 	lat, lng, _ := strings.Cut(data.Location, ",")
 	return listingResponse{
-		Id:       data.ID,
-		Title:    data.Title,
-		ImageSrc: data.Imagesrc,
-		// Name:          data.Name,
-		// Email:         data.Email,
+		Id:            data.ID,
+		Title:         data.Title,
+		ImageSrc:      data.Imagesrc,
 		Country:       data.Country,
 		Location:      locationResponse{Lat: lat, Lng: lng},
 		BathroomCount: data.BathroomCount,
@@ -64,6 +63,7 @@ func (l *listingResponse) Response(data db.Listing) listingResponse {
 		Description:   data.Description,
 		Category:      data.Category,
 		Reservations:  data.Reservations,
+		Price:         data.Price,
 		User:          userResponse{Name: data.User.Name, Email: data.User.Email},
 	}
 }
