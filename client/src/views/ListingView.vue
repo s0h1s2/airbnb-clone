@@ -58,20 +58,7 @@
                 <WorldMap :lat="Number(listing?.location.lat!)" :lan="Number(listing?.location.lng!)" />
               </div>
             </div>
-            <div class="order-first mb-10 md:order-last md:col-span-3">
-              <div class="bg-white rounded-xl border-[1px] border-neutral-200 overflow-hidden">
-                <div class="flex flex-row items-center gap-1 p-4">
-                  <div class="text-2xl font-semibold">
-                    $ {{ listing?.price }}
-                  </div>
-                  <div class="font-light text-neutral-600">
-                    Night
-                  </div>
-                </div>
-                <hr />
-              </div>
-              <ReservationDatePicker />
-            </div>
+            <ReservationDatePicker :reservations="listing?.reservations" :price="listing?.price" />
           </div>
         </div>
       </div>

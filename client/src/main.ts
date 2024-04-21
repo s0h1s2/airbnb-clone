@@ -13,6 +13,7 @@ import { useUserStore } from './stores/userStore'
 import "vue-toastification/dist/index.css";
 import "vue-select/dist/vue-select.css";
 import "leaflet/dist/leaflet.css";
+import '@vuepic/vue-datepicker/dist/main.css'
 import './assets/base.css'
 
 const app = createApp(App)

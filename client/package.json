@@ -14,6 +14,7 @@
   "dependencies": {
     "@cloudinary/url-gen": "^1.19.0",
     "@cloudinary/vue": "^1.12.1",
+    "@popperjs/core": "^2.11.8",
     "@types/leaflet": "^1.9.8",
     "@types/vue-select": "^3.16.8",
     "@vee-validate/zod": "^4.12.6",
@@ -22,6 +23,7 @@
     "date-fns": "^3.6.0",
     "oh-vue-icons": "^1.0.0-rc3",
     "pinia": "^2.1.7",
+    "v-calendar": "^3.1.2",
     "vee-validate": "^4.12.6",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
