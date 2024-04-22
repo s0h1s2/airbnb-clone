@@ -43,7 +43,7 @@ function processResults(error: any, result: any) {
   }
 }
 function openUploadWidget() {
-  if (!scriptLoaded) {
+  if (!scriptLoaded.value) {
     return
   }
   isDisabled.value = true

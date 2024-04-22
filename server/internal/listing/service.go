@@ -65,3 +65,12 @@ func favoriteListing(ctx *gin.Context) {
 	listing.Favorite(user.Uid)
 	ctx.JSON(http.StatusOK, common.OkApiResponse{})
 }
+func reserveListing(ctx *gin.Context) {
+	var json createReserveRequest
+	if err := ctx.ShouldBindJSON(&json); err != nil {
+		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{Errors: err.Error(), StatusCode: http.StatusBadRequest})
+		return
+	}
+	ctx.JSON(http.StatusCreated, common.OkApiResponse{Data: nil})
+
+}

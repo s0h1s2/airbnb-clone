@@ -10,10 +10,20 @@
         </div>
       </div>
       <hr />
-      <DatePicker class="rounded-none" v-model.range="date" :attributes="attrs" :disabled-dates="disabledDates"
-        expanded />
-
-      <Button label="Reverse" outline></Button>
+      <DatePicker class="rounded-none" :min-date="new Date()" v-model.range="date" :attributes="attrs"
+        :disabled-dates="disabledDates" expanded />
+      <hr />
+      <div class="p-4">
+        <Button label="Reserve"></Button>
+      </div>
+      <div class="p-4 flex flex-row items-center justify-between font-semibold text-lg">
+        <div>
+          Total
+        </div>
+        <div>
+          $ {{ totalPrice }}
+        </div>
+      </div>
     </div>
   </div>
 
@@ -23,18 +33,27 @@
 
 import Button from "@/components/Button.vue"
 import 'v-calendar/style.css';
+import { differenceInCalendarDays } from "date-fns"
 import { DatePicker } from "v-calendar"
 
-import { ref, type Ref } from "vue"
+import { ref, watch } from "vue"
 import type { Reservation } from "@/types/reservation"
 const props = defineProps<{ price: number, reservations: Reservation[] }>()
+const disabledDates = ref([...props.reservations])
 const date = ref({
   start: new Date(),
   end: new Date()
 })
-const disabledDates = ref([...props.reservations])
+watch(date, () => {
+  const days = differenceInCalendarDays(date.value.end, date.value.start) + 1
+  totalPrice.value = days * props.price
+})
+const totalPrice = ref(props.price)
 const attrs = ref({
-  highlight: true
+  highlight: true,
+  popover: {
+    visiability: "hover"
+  }
 })
 </script>
 

@@ -1,6 +1,9 @@
 package listing
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 type location struct {
 	Lat float32 `json:"lat"`
@@ -22,4 +25,8 @@ type createListingRequest struct {
 	Price         float32  `json:"price" binding:"required,numeric"`
 	Location      location `json:"location" binding:"required"`
 	Country       string   `json:"country" binding:"required"`
+}
+type createReserveRequest struct {
+	StartDate time.Time `json:"startDate" binding:"required,datetime"`
+	EndDate   time.Time `json:"endDate" binding:"required,datetime"`
 }
