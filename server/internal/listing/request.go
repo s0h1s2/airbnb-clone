@@ -27,6 +27,6 @@ type createListingRequest struct {
 	Country       string   `json:"country" binding:"required"`
 }
 type createReserveRequest struct {
-	StartDate time.Time `json:"startDate" binding:"required,datetime"`
-	EndDate   time.Time `json:"endDate" binding:"required,datetime"`
+	StartDate time.Time `json:"start" binding:"required"`
+	EndDate   time.Time `json:"end" binding:"required"`
 }

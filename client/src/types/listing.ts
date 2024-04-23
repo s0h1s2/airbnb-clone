@@ -20,6 +20,6 @@ export interface Listing {
   guestCount: number
   roomCount: number
   bathroomCount: number
-  reservation: Reservation[]
+  reservations: Reservation[]
   user: User
 }

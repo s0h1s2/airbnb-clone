@@ -19,9 +19,8 @@
             <div class="flex flex-col gap-8">
               <Heading title="Where is your place located?" subtitle="Help guests find you!" />
               <CountrySelect v-model="selectedCountry" />
-              <div class="w-auto h-[35vh] rounded-lg">
-                <WorldMap :lan="selectedCountry?.latlang[1] || 0" :lat="selectedCountry?.latlang[0] || 0"
-                  @onCoordChange="(l) => { locationCoord = l; setFieldValue('location', l); }" />
+              <div class="w-[400px] h-[40vh] rounded-lg">
+                <WorldMap :lan="3.4360" :lat="55.3781" />
               </div>
             </div>
           </div>
@@ -92,7 +91,7 @@ const imageSrc: Ref<string | null> = ref(null)
 const rentModal = useRentModalStore()
 const categories = readonly(CATEGORIES)
 const selectedCountry = defineModel<Country>()
-const locationCoord: Ref<L.LatLngExpression> = ref([0, 0])
+const locationCoord: Ref<L.LatLngExpression> = ref([40.737, -73.923])
 const toast = useToast()
 watch(imageSrc, () => {
   setFieldValue('imageSrc', imageSrc?.value || "")

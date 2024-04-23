@@ -58,7 +58,7 @@
                 <WorldMap :lat="Number(listing?.location.lat!)" :lan="Number(listing?.location.lng!)" />
               </div>
             </div>
-            <ReservationDatePicker :reservations="listing?.reservations" :price="listing?.price" />
+            <ReservationDatePicker :id="listing?.id!" :reservations="listing?.reservations!" :price="listing?.price!" />
           </div>
         </div>
       </div>

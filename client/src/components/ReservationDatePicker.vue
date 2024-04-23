@@ -14,7 +14,7 @@
         :disabled-dates="disabledDates" expanded />
       <hr />
       <div class="p-4">
-        <Button label="Reserve"></Button>
+        <Button @onClick="reserve" label="Reserve"></Button>
       </div>
       <div class="p-4 flex flex-row items-center justify-between font-semibold text-lg">
         <div>
@@ -38,7 +38,11 @@ import { DatePicker } from "v-calendar"
 
 import { ref, watch } from "vue"
 import type { Reservation } from "@/types/reservation"
-const props = defineProps<{ price: number, reservations: Reservation[] }>()
+import { useListingStore } from "@/stores/listingStore";
+import { useUserStore } from "@/stores/userStore";
+import { useLoginModalStore } from "@/stores/loginModal";
+
+const props = defineProps<{ id: string, price: number, reservations: Reservation[] }>()
 const disabledDates = ref([...props.reservations])
 const date = ref({
   start: new Date(),
@@ -48,6 +52,16 @@ watch(date, () => {
   const days = differenceInCalendarDays(date.value.end, date.value.start) + 1
   totalPrice.value = days * props.price
 })
+const listingStore = useListingStore()
+const userStore = useUserStore()
+const loginModalStore = useLoginModalStore()
+function reserve() {
+  if (!userStore.isAuth) {
+    loginModalStore.onOpen()
+    return
+  }
+  listingStore.reserveListing(props.id, { start: date.value.start, end: date.value.end })
+}
 const totalPrice = ref(props.price)
 const attrs = ref({
   highlight: true,
