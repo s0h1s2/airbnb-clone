@@ -8,8 +8,8 @@ import (
 
 type Reservation struct {
 	gorm.Model `json:"-"`
-	StartDate  time.Time `json:"start"`
-	EndDate    time.Time `json:"end"`
+	StartDate  time.Time `json:"start" gorm:"unique"`
+	EndDate    time.Time `json:"end" gorm:"unique"`
 	TotalPrice float32
 	UserId     uint
 	ListingID  uint

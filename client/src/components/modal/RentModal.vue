@@ -19,7 +19,7 @@
             <div class="flex flex-col gap-8">
               <Heading title="Where is your place located?" subtitle="Help guests find you!" />
               <CountrySelect v-model="selectedCountry" />
-              <div class="w-[400px] h-[40vh] rounded-lg">
+              <div class="w-auto h-[400px] rounded-lg">
                 <WorldMap :lan="3.4360" :lat="55.3781" />
               </div>
             </div>
@@ -85,6 +85,8 @@ enum Steps {
   PRICE,
   END
 }
+
+const toast = useToast()
 const selectedCategory: Ref<string> = ref(CATEGORIES[0].label)
 const currentStep: Ref<Steps> = ref(Steps.CATEGORY)
 const imageSrc: Ref<string | null> = ref(null)
@@ -92,7 +94,6 @@ const rentModal = useRentModalStore()
 const categories = readonly(CATEGORIES)
 const selectedCountry = defineModel<Country>()
 const locationCoord: Ref<L.LatLngExpression> = ref([40.737, -73.923])
-const toast = useToast()
 watch(imageSrc, () => {
   setFieldValue('imageSrc', imageSrc?.value || "")
 })

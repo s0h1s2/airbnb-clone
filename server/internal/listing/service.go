@@ -3,6 +3,7 @@ package listing
 import (
 	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/s0h1s2/airbnb-clone/internal/common"
@@ -12,7 +13,8 @@ import (
 )
 
 var (
-	lisitngNotFoundErr = errors.New("Listing not found.")
+	lisitngNotFoundErr    = errors.New("Listing not found.")
+	acceptNumberIdOnlyErr = errors.New("Only accept number only.")
 )
 
 func getListings(ctx *gin.Context) {
@@ -71,6 +73,19 @@ func reserveListing(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{Errors: err.Error(), StatusCode: http.StatusBadRequest})
 		return
 	}
+	listingID, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{Errors: acceptNumberIdOnlyErr.Error()})
+		return
+	}
+	user := common.GetUserClaimsFromContext(ctx)
+	reservation := db.Reservation{UserId: user.Uid, ListingID: uint(listingID), StartDate: json.StartDate, EndDate: json.EndDate}
+	record := db.Db.Create(&reservation)
+	if record.Error != nil {
+		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{Errors: record.Error.Error()})
+		return
+	}
+
 	ctx.JSON(http.StatusCreated, common.OkApiResponse{Data: nil})
 
 }
