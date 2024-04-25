@@ -54,7 +54,7 @@
                 {{ listing?.description }}
               </div>
               <hr />
-              <div class="w-[400px] h-[360px]">
+              <div class="w-auto h-[40vh]">
                 <WorldMap :lat="Number(listing?.location.lat!)" :lan="Number(listing?.location.lng!)" />
               </div>
             </div>

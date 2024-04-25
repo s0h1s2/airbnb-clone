@@ -15,12 +15,12 @@
               </div>
             </div>
           </div>
-          <div v-show="currentStep == Steps.LOCATION">
+          <div v-if="currentStep == Steps.LOCATION">
             <div class="flex flex-col gap-8">
               <Heading title="Where is your place located?" subtitle="Help guests find you!" />
               <CountrySelect v-model="selectedCountry" />
-              <div class="w-auto h-[400px] rounded-lg">
-                <WorldMap :lan="3.4360" :lat="55.3781" />
+              <div class="w-auto h-[40vh]">
+                <WorldMap :lat="selectedCountry?.latlang[0] || 40.737 " :lan="selectedCountry?.latlang[1] || -73.923 " @onCoordChange="(coord)=>locationCoord=coord"/>
               </div>
             </div>
           </div>
@@ -66,15 +66,15 @@ import Input from "../inputs/Input.vue"
 import { useForm } from "vee-validate"
 import { useToast } from "vue-toastification"
 import { useRentModalStore } from "@/stores/rentModalStore";
-import { type Ref, ref, readonly, watch } from "vue"
+import { type Ref, ref, readonly, watch, onMounted, nextTick } from "vue"
 import { CATEGORIES } from "@/constants/categories"
 import CategoryInput from "@/components/inputs/categoryinput.vue"
 import CountrySelect from "@/components/inputs/countryselect.vue"
 import CounterInput from "@/components/CounterInput.vue"
 import ImageUpload from "@/components/inputs/ImageUpload.vue"
-import WorldMap from "@/components/WorldMap.vue"
 import type { Country } from "@/types/country"
 import { client } from "@/lib/client"
+import WorldMap from "@/components/WorldMap.vue"
 enum Steps {
   START,
   CATEGORY,
@@ -92,6 +92,8 @@ const currentStep: Ref<Steps> = ref(Steps.CATEGORY)
 const imageSrc: Ref<string | null> = ref(null)
 const rentModal = useRentModalStore()
 const categories = readonly(CATEGORIES)
+const zoom = ref(4)
+const map: Ref<L.Map | null> = ref(null)
 const selectedCountry = defineModel<Country>()
 const locationCoord: Ref<L.LatLngExpression> = ref([40.737, -73.923])
 watch(imageSrc, () => {
@@ -101,8 +103,9 @@ watch(imageSrc, () => {
 watch(selectedCountry, () => {
   setFieldValue('country', selectedCountry.value?.value || "")
 })
-
-
+watch(locationCoord, () => {
+  setFieldValue("location", locationCoord.value)
+})
 
 type FormData = {
   category: string
@@ -116,7 +119,6 @@ type FormData = {
   location: L.LatLngExpression
   country: string
 }
-
 const { handleSubmit, isSubmitting, setFieldValue } = useForm<FormData>({
   initialValues: {
     category: CATEGORIES[0].label,
@@ -136,14 +138,11 @@ const nextStep = () => {
 }
 
 
-
 const backStep = () => {
   if (currentStep.value > Steps.START + 1)
     currentStep.value--;
 
 }
-
-
 
 const onSubmit = handleSubmit(async (data) => {
   await client.post("/listing", data).then(() => {
@@ -152,6 +151,5 @@ const onSubmit = handleSubmit(async (data) => {
   }).catch(() => {
     toast.error("Unable to create listing. Please try again")
   })
-  console.log(data)
 })
 </script>

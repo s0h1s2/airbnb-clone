@@ -42,7 +42,7 @@ import { useListingStore } from "@/stores/listingStore";
 import { useUserStore } from "@/stores/userStore";
 import { useLoginModalStore } from "@/stores/loginModal";
 
-const props = defineProps<{ id: string, price: number, reservations: Reservation[] }>()
+const props = defineProps<{ id: string | number, price: number, reservations: Reservation[] }>()
 const disabledDates = ref([...props.reservations])
 const date = ref({
   start: new Date(),
