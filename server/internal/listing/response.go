@@ -48,6 +48,13 @@ type listingResponse struct {
 	Reservations  []db.Reservation `json:"reservations"`
 	User          userResponse     `json:"user"`
 }
+type tripsResponse struct {
+	StartDate  string  `json:"startDate"`
+	EndDate    string  `json:"endDate"`
+	Title      string  `json:"title"`
+	TotalPrice float32 `json:"price"`
+	Country    string  `json:"country"`
+}
 
 func (l *listingResponse) Response(data db.Listing) listingResponse {
 	lat, lng, _ := strings.Cut(data.Location, ",")

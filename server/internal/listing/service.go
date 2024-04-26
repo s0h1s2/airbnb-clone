@@ -97,5 +97,10 @@ func reserveListing(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusCreated, common.OkApiResponse{Data: nil})
-
+}
+func getUserTrips(ctx *gin.Context) {
+	var listings []tripsResponse
+	user := common.GetUserClaimsFromContext(ctx)
+	db.Db.Raw("SELECT * FROM reservations INNER JOIN listings ON reservations.listing_id=listings.id where reservations.user_id=? AND reservations.start_date>=?", user.Uid, time.Now()).Find(&listings)
+	ctx.JSON(http.StatusOK, gin.H{"data": listings})
 }

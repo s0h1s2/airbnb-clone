@@ -11,4 +11,5 @@ func RegisterRoutes(route gin.IRouter) {
 	route.POST("/listing", middleware.IsAuth(), createNewListing)
 	route.POST("/listing/:id/favorite", middleware.IsAuth(), favoriteListing)
 	route.POST("/listing/:id/reserve", middleware.IsAuth(), reserveListing)
+	route.GET("/listing/trips", middleware.IsAuth(), getUserTrips)
 }
