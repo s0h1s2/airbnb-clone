@@ -88,10 +88,13 @@ const router = useRouter()
 const category = computed(() => {
   return CATEGORIES.find((cat) => cat.label == listing.value?.category)
 })
-watchEffect(async () => {
-  await client.get<OkResponseResult<Listing>>(`listing/${route.params.id}`).then((r) => {
+
+watchEffect(() => {
+  isLoaded.value = false
+  client.get<OkResponseResult<Listing>>(`listing/${route.params.id}`).then((r) => {
     listing.value = r.data.data
   }).catch(() => {
+    isLoaded.value = true
     router.replace("/")
   }).finally(() => {
     isLoaded.value = true

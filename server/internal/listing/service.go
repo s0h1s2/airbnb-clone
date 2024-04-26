@@ -4,10 +4,12 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/s0h1s2/airbnb-clone/internal/common"
 	"github.com/s0h1s2/airbnb-clone/internal/db"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -15,6 +17,8 @@ import (
 var (
 	lisitngNotFoundErr    = errors.New("Listing not found.")
 	acceptNumberIdOnlyErr = errors.New("Only accept number only.")
+	reservationExistErr   = errors.New("Reservation exist.")
+	favoriteExistErr      = errors.New("Favorite exist.")
 )
 
 func getListings(ctx *gin.Context) {
@@ -56,15 +60,15 @@ func getListingById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, common.OkApiResponse{Data: response.Response(result)})
 }
 func favoriteListing(ctx *gin.Context) {
-	listing := db.Listing{}
-	result := db.Db.Where("id=?", ctx.Param("id")).First(&listing)
-	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{StatusCode: http.StatusBadRequest, Errors: lisitngNotFoundErr.Error()})
+	listing := db.ListingFavorite{}
+	user := common.GetUserClaimsFromContext(ctx)
+	result := db.Db.Where("listing_id=? AND user_id=?", ctx.Param("id"), user.Uid).First(&listing)
+	if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{StatusCode: http.StatusBadRequest, Errors: favoriteExistErr.Error()})
 		return
 	}
-	user := common.GetUserClaimsFromContext(ctx)
-
-	listing.Favorite(user.Uid)
+	listingId, _ := strconv.ParseUint(ctx.Param("id"), 0, 0)
+	db.Db.Create(&db.ListingFavorite{ListingId: uint(listingId), UserId: user.Uid})
 	ctx.JSON(http.StatusOK, common.OkApiResponse{})
 }
 func reserveListing(ctx *gin.Context) {
@@ -73,19 +77,25 @@ func reserveListing(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{Errors: err.Error(), StatusCode: http.StatusBadRequest})
 		return
 	}
+
 	listingID, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{Errors: acceptNumberIdOnlyErr.Error()})
 		return
 	}
 	user := common.GetUserClaimsFromContext(ctx)
-	reservation := db.Reservation{UserId: user.Uid, ListingID: uint(listingID), StartDate: json.StartDate, EndDate: json.EndDate}
+	reservationExist := db.Reservation{}
+	result := db.Db.Where("start_date=? AND end_date=?", json.StartDate.Format(time.DateOnly), json.EndDate.Format(time.DateOnly)).First(&reservationExist, "listing_id=?", uint(listingID))
+	if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{Errors: reservationExistErr.Error()})
+		return
+	}
+	reservation := db.Reservation{UserId: user.Uid, ListingID: uint(listingID), StartDate: datatypes.Date(json.StartDate), EndDate: datatypes.Date(json.EndDate)}
 	record := db.Db.Create(&reservation)
 	if record.Error != nil {
 		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{Errors: record.Error.Error()})
 		return
 	}
-
 	ctx.JSON(http.StatusCreated, common.OkApiResponse{Data: nil})
 
 }

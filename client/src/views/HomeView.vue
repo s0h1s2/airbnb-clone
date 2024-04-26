@@ -5,11 +5,15 @@ import LoadingSpinner from "@/components/LoadingSpinner.vue"
 import ListingCard from "@/components/ListingCard.vue"
 
 import { useListingStore } from "@/stores/listingStore"
-
+import { useRoute } from "vue-router"
+import { watch } from "vue"
 const listingStore = useListingStore()
 
 listingStore.getListings()
-
+const route = useRoute()
+watch(() => route.query.category, () => {
+  listingStore.getListings({ category: route.query.category?.toString() })
+})
 
 </script>
 

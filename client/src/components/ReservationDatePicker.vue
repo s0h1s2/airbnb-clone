@@ -14,7 +14,7 @@
         :disabled-dates="disabledDates" expanded />
       <hr />
       <div class="p-4">
-        <Button @onClick="reserve" label="Reserve"></Button>
+        <Button :disabled="isReserving" @onClick="reserve" label="Reserve"></Button>
       </div>
       <div class="p-4 flex flex-row items-center justify-between font-semibold text-lg">
         <div>
@@ -55,12 +55,15 @@ watch(date, () => {
 const listingStore = useListingStore()
 const userStore = useUserStore()
 const loginModalStore = useLoginModalStore()
+const isReserving = ref(false)
 function reserve() {
   if (!userStore.isAuth) {
     loginModalStore.onOpen()
     return
   }
+  isReserving.value = true
   listingStore.reserveListing(props.id, { start: date.value.start, end: date.value.end })
+  isReserving.value = false
 }
 const totalPrice = ref(props.price)
 const attrs = ref({

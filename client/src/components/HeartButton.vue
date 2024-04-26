@@ -11,20 +11,23 @@ import type { ListingUserFavorites } from '@/types/listing';
 import { client } from "@/lib/client"
 import { ref, watch } from 'vue';
 import { useToast } from 'vue-toastification';
-
-const props = defineProps<{ listingId: string | number, favorites: ListingUserFavorites[], userId?: number }>()
+import { useUserStore } from "@/stores/userStore"
+import { storeToRefs } from 'pinia';
+const userStore = useUserStore()
+const props = defineProps<{ listingId: string | number, favorites: ListingUserFavorites[] }>()
 const toast = useToast()
 const isFavorited = ref(false)
 async function makeItFavorite() {
   await client.post(`/listing/${props.listingId}/favorite`).then(() => {
+    isFavorited.value=true
     toast.success("Favorited")
   }).catch(() => {
     toast.error("Unable to make it favorite")
   })
 }
-watch(() => props.userId, (newUserId) => {
-  isFavorited.value = Boolean(props.favorites.some((fav) => fav.userId == newUserId))
-
+const { user } = storeToRefs(userStore)
+watch(() => user.value?.id, () => {
+  isFavorited.value = Boolean(props.favorites.some((fav) => fav.userId == user.value?.id))
 })
 </script>
 
