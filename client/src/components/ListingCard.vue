@@ -1,11 +1,11 @@
 <template>
-  <div @click="router.push(`/listing/${listing.id}`)" class="col-span-1 cursor-pointer group">
+  <div @click="router.push(`/listing/${listingId}`)" class="col-span-1 cursor-pointer group">
     <div class="flex flex-col gap-2 w-full">
       <div class="aspect-square w-full relative overflow-hidden rounded-xl">
         <img :src="listing.imageSrc" class="object-cover w-full h-full group-hover:scale-110 transition"
           alt="Property photo">
         <div class="absolute top-3 right-3">
-          <HeartButton :listing-id="listing.id" :favorites="listing.favorites" :user-id="user?.id" />
+          <HeartButton :listing-id="listingId" :favorites="listing.favorites || []" />
         </div>
       </div>
       <div class="font-semibold text-lg">
@@ -30,24 +30,24 @@ import { format } from "date-fns"
 import { useRouter } from 'vue-router';
 import HeartButton from "./HeartButton.vue"
 import type { Listing } from '@/types/listing';
-import { storeToRefs } from "pinia"
+import type { Trips } from '@/types/trips';
 import { useCountriesStore } from "@/stores/countriesStore"
-import { useUserStore } from "@/stores/userStore"
 const countryStore = useCountriesStore()
-const userStore = useUserStore()
 
 const props = defineProps<{
-  listing: Listing
+  listing: Listing | Trips
   reservation?: {
     startDate: string
     endDate: string
   }
 }>()
-const { user } = storeToRefs(userStore)
 
 const country = countryStore.getByValue(props.listing.country)
-
 const router = useRouter()
+const listingId = computed(() => {
+  // @ts-ignore
+  return props.listing?.listingId != undefined ? props.listing?.listingId! : props.listing.id
+})
 const countryAndRegion = computed(() => {
   return `${country?.region},${country?.label}`
 })
@@ -60,7 +60,7 @@ const reservationDate = computed(() => {
   }
   const start = new Date(props.reservation.startDate)
   const end = new Date(props.reservation.endDate)
-  return `${format(start, 'pp')} - ${format(end, 'pp')}`
+  return `${format(start, 'PP')} - ${format(end, 'PP')}`
 })
 
 </script>

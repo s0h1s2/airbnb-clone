@@ -2,9 +2,8 @@ import { client } from "@/lib/client";
 import type { Listing } from "@/types/listing";
 import type { Reservation } from "@/types/reservation";
 import type { OkResponseResult } from "@/types/response";
+import type { Axios } from "axios";
 import { defineStore } from "pinia";
-import { useToast } from "vue-toastification";
-const toast = useToast()
 interface ApiParams {
   category?: string
 }
@@ -23,12 +22,8 @@ export const useListingStore = defineStore("listings", {
         this.isLoaded = true
       })
     },
-    reserveListing(id: string | number, reservation: Reservation) {
-      client.post(`/listing/${id}/reserve`, reservation).then(() => {
-        toast.success("Reserve listing successfully")
-      }).catch(() => {
-        toast.error("Unable to reserve listing.Try Again")
-      })
+    reserveListing(id: string | number, reservation: Reservation): Promise<Axios> {
+      return client.post(`/listing/${id}/reserve`, reservation)
     },
   }
 })

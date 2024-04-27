@@ -31,7 +31,7 @@ router.beforeEach((route) => {
     return { name: 'home' }
   }
   if (!userStore.isAuth && route.meta.requiresAuth) {
-    return { name: 'auth' }
+    return { name: 'auth', query: { redirect: route.path } }
   }
 })
 

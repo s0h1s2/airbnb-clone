@@ -41,6 +41,7 @@ import type { Reservation } from "@/types/reservation"
 import { useListingStore } from "@/stores/listingStore";
 import { useUserStore } from "@/stores/userStore";
 import { useLoginModalStore } from "@/stores/loginModal";
+import { useToast } from "vue-toastification";
 
 const props = defineProps<{ id: string | number, price: number, reservations: Reservation[] }>()
 const disabledDates = ref([...props.reservations])
@@ -56,13 +57,20 @@ const listingStore = useListingStore()
 const userStore = useUserStore()
 const loginModalStore = useLoginModalStore()
 const isReserving = ref(false)
+const toast = useToast()
 function reserve() {
   if (!userStore.isAuth) {
     loginModalStore.onOpen()
     return
   }
   isReserving.value = true
-  listingStore.reserveListing(props.id, { start: date.value.start, end: date.value.end })
+  const reserveDate = { start: date.value.start, end: date.value.end }
+  listingStore.reserveListing(props.id, reserveDate).then(() => {
+    disabledDates.value.push(reserveDate)
+    toast.success("Reserve listing successful.")
+  }).catch(() => {
+    toast.error("Unable to reserve listing")
+  })
   isReserving.value = false
 }
 const totalPrice = ref(props.price)

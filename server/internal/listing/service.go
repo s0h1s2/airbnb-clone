@@ -50,8 +50,13 @@ func createNewListing(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, common.OkApiResponse{Data: createListingResponse{}, StatusCode: http.StatusCreated})
 }
 func getListingById(ctx *gin.Context) {
+	listingId, err := strconv.ParseUint(ctx.Param("id"), 0, 0)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, common.ErrorApiResponse{StatusCode: http.StatusNotFound, Errors: lisitngNotFoundErr.Error()})
+		return
+	}
 	result := db.Listing{}
-	queryResult := db.Db.Preload("User").Preload("Reservations").First(&result, ctx.Param("id"))
+	queryResult := db.Db.Preload("User").Preload("Reservations").First(&result, "id=?", listingId)
 	if errors.Is(queryResult.Error, gorm.ErrRecordNotFound) {
 		ctx.JSON(http.StatusNotFound, common.ErrorApiResponse{StatusCode: http.StatusNotFound, Errors: lisitngNotFoundErr.Error()})
 		return
@@ -101,6 +106,6 @@ func reserveListing(ctx *gin.Context) {
 func getUserTrips(ctx *gin.Context) {
 	var listings []tripsResponse
 	user := common.GetUserClaimsFromContext(ctx)
-	db.Db.Raw("SELECT * FROM reservations INNER JOIN listings ON reservations.listing_id=listings.id where reservations.user_id=? AND reservations.start_date>=?", user.Uid, time.Now()).Find(&listings)
+	db.Db.Raw("SELECT * FROM Reservations INNER JOIN Listings ON Reservations.listing_id=Listings.id WHERE Reservations.user_id=? ORDER BY Reservations.created_at DESC", user.Uid).Find(&listings)
 	ctx.JSON(http.StatusOK, gin.H{"data": listings})
 }

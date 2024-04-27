@@ -7,9 +7,9 @@ import (
 
 type Reservation struct {
 	gorm.Model `json:"-"`
-	StartDate  datatypes.Date `json:"start" gorm:"unique"`
-	EndDate    datatypes.Date `json:"end" gorm:"unique"`
+	StartDate  datatypes.Date `json:"start"`
+	EndDate    datatypes.Date `json:"end"`
 	TotalPrice float32
-	UserId     uint
-	ListingID  uint
+	UserId     uint `json:"-"`
+	ListingID  uint `json:"-"`
 }
