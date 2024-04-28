@@ -13,7 +13,8 @@
       2xl:grid-cols-6 
       gap-8">
       <ListingCard v-for="trip in trips" :listing="trip"
-        :reservation="{ startDate: trip.startDate, endDate: trip.endDate }" />
+        :reservation="{ startDate: trip.startDate, endDate: trip.endDate }" actionLabel="Cancel Trip"
+        @onClick="console.log(trip.id)" />
     </div>
   </Container>
 </template>

@@ -15,10 +15,11 @@ import (
 )
 
 var (
-	lisitngNotFoundErr    = errors.New("Listing not found.")
-	acceptNumberIdOnlyErr = errors.New("Only accept number only.")
-	reservationExistErr   = errors.New("Reservation exist.")
-	favoriteExistErr      = errors.New("Favorite exist.")
+	lisitngNotFoundErr        = errors.New("Listing not found.")
+	acceptNumberIdOnlyErr     = errors.New("Only accept number only.")
+	reservationExistErr       = errors.New("Reservation exist.")
+	reservationDoesntExistErr = errors.New("Reservation doesn't exist.")
+	favoriteExistErr          = errors.New("Favorite exist.")
 )
 
 func getListings(ctx *gin.Context) {
@@ -106,6 +107,27 @@ func reserveListing(ctx *gin.Context) {
 func getUserTrips(ctx *gin.Context) {
 	var listings []tripsResponse
 	user := common.GetUserClaimsFromContext(ctx)
-	db.Db.Raw("SELECT * FROM Reservations INNER JOIN Listings ON Reservations.listing_id=Listings.id WHERE Reservations.user_id=? ORDER BY Reservations.created_at DESC", user.Uid).Find(&listings)
+	db.Db.Raw("SELECT *,Reservations.id as reservation_id FROM Reservations INNER JOIN Listings ON Reservations.listing_id=Listings.id WHERE Reservations.user_id=? ORDER BY Reservations.created_at DESC", user.Uid).Find(&listings)
 	ctx.JSON(http.StatusOK, gin.H{"data": listings})
+}
+func cancelReserve(ctx *gin.Context) {
+	reservationId, err := strconv.ParseUint(ctx.Param("id"), 0, 0)
+	userId := common.GetUserClaimsFromContext(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{Errors: acceptNumberIdOnlyErr.Error(), StatusCode: http.StatusBadRequest})
+		return
+	}
+	var reservation db.Reservation
+	result := db.Db.First(&reservation, reservationId)
+	println(result.Error.Error())
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{Errors: reservationDoesntExistErr.Error(), StatusCode: http.StatusBadRequest})
+		return
+	}
+	if reservation.UserId != userId.Uid {
+		ctx.JSON(http.StatusUnauthorized, common.ErrorApiResponse{Errors: nil, StatusCode: http.StatusUnauthorized})
+		return
+	}
+	db.Db.Unscoped().Delete(&reservation)
+	ctx.JSON(http.StatusOK, common.OkApiResponse{StatusCode: http.StatusOK})
 }

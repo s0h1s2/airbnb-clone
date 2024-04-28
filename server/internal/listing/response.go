@@ -49,14 +49,15 @@ type listingResponse struct {
 	User          userResponse     `json:"user"`
 }
 type tripsResponse struct {
-	ID         uint    `json:"listingId"`
-	StartDate  string  `json:"startDate"`
-	EndDate    string  `json:"endDate"`
-	Title      string  `json:"title"`
-	TotalPrice float32 `json:"price"`
-	Country    string  `json:"country"`
-	Imagesrc   string  `json:"imageSrc"`
-	Category   string  `json:"category"`
+	ReservationID uint    `json:"id"`
+	ListingID     uint    `json:"listingId"`
+	StartDate     string  `json:"startDate"`
+	EndDate       string  `json:"endDate"`
+	Title         string  `json:"title"`
+	TotalPrice    float32 `json:"price"`
+	Country       string  `json:"country"`
+	Imagesrc      string  `json:"imageSrc"`
+	Category      string  `json:"category"`
 }
 
 func (l *listingResponse) Response(data db.Listing) listingResponse {

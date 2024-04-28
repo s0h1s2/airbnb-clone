@@ -20,6 +20,7 @@
         </div>
         <div v-if="!reservation" class="font-light">Night</div>
       </div>
+      <Button v-if="actionLabel" small :label="actionLabel" @onClick="emit('onClick')" />
     </div>
   </div>
 </template>
@@ -29,6 +30,7 @@ import { computed } from 'vue';
 import { format } from "date-fns"
 import { useRouter } from 'vue-router';
 import HeartButton from "./HeartButton.vue"
+import Button from "@/components/Button.vue"
 import type { Listing } from '@/types/listing';
 import type { Trips } from '@/types/trips';
 import { useCountriesStore } from "@/stores/countriesStore"
@@ -40,8 +42,11 @@ const props = defineProps<{
     startDate: string
     endDate: string
   }
+  actionLabel?: string
 }>()
-
+const emit = defineEmits<{
+  onClick: [void]
+}>()
 const country = countryStore.getByValue(props.listing.country)
 const router = useRouter()
 const listingId = computed(() => {
