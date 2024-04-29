@@ -7,7 +7,7 @@
       <div class="max-w-screen-lg mx-auto">
         <div class="flex flex-col gap-6">
           <ListingHead :id="listing?.id!" :title="listing?.title!" :imageSrc="listing?.imageSrc!"
-            :location="listing?.location!" :country="listing?.country!" />
+            :location="listing?.location!" :country="listing?.country!" :favorites="listing?.favorites!" />
           <div class="grid grid-cols-1 md:grid-cols-7 md:gap-10 mt-6">
 
             <div class="col-span-4 flex flex-col gap-8">

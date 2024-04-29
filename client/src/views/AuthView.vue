@@ -1,6 +1,6 @@
 <template>
   <h1 class="flex h-screen items-center justify-center text-center">
-    Authentication Require to visit
+    Authentication Require to visit {{ route.query?.redirect }}
   </h1>
 </template>
 
@@ -16,7 +16,6 @@ const router = useRouter()
 const { isAuth } = storeToRefs(userStore)
 const loginModal = useLoginModalStore()
 if (isAuth.value == true) {
-  console.log(isAuth.value)
   router.replace(route.query.redirect?.toString() || "/")
 }
 

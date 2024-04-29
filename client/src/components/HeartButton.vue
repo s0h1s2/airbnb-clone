@@ -16,17 +16,17 @@ import { storeToRefs } from 'pinia';
 const userStore = useUserStore()
 const props = defineProps<{ listingId: string | number, favorites: ListingUserFavorites[] }>()
 const toast = useToast()
-const isFavorited = ref(false)
 async function makeItFavorite() {
   await client.post(`/listing/${props.listingId}/favorite`).then(() => {
-    isFavorited.value=true
+    isFavorited.value = true
     toast.success("Favorited")
   }).catch(() => {
     toast.error("Unable to make it favorite")
   })
 }
 const { user } = storeToRefs(userStore)
-watch(() => user.value?.id, () => {
+const isFavorited = ref(Boolean(props.favorites.some((fav) => fav.userId == user.value?.id)))
+watch(() => [user.value?.id], () => {
   isFavorited.value = Boolean(props.favorites.some((fav) => fav.userId == user.value?.id))
 })
 </script>

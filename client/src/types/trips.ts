@@ -1,3 +1,5 @@
+import type { ListingUserFavorites } from "./listing"
+
 export interface Trips {
   listingId: number | string
   id: number | string
@@ -8,5 +10,5 @@ export interface Trips {
   startDate: string
   endDate: string
   imageSrc: string
-  favorites: never
+  favorites: ListingUserFavorites[]
 }
