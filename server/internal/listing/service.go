@@ -15,11 +15,12 @@ import (
 )
 
 var (
-	lisitngNotFoundErr        = errors.New("Listing not found.")
-	acceptNumberIdOnlyErr     = errors.New("Only accept number only.")
-	reservationExistErr       = errors.New("Reservation exist.")
-	reservationDoesntExistErr = errors.New("Reservation doesn't exist.")
-	favoriteExistErr          = errors.New("Favorite exist.")
+	lisitngNotFoundErr                       = errors.New("Listing not found.")
+	acceptNumberIdOnlyErr                    = errors.New("Only accept number only.")
+	reservationExistErr                      = errors.New("Reservation exist.")
+	reservationDoesntExistErr                = errors.New("Reservation doesn't exist.")
+	ownerCantMakeReservationOnOwnPropertyErr = errors.New("Owner can't make reservation on own property.")
+	favoriteExistErr                         = errors.New("Favorite exist.")
 )
 
 func getListings(ctx *gin.Context) {
@@ -57,7 +58,7 @@ func getListingById(ctx *gin.Context) {
 		return
 	}
 	result := db.Listing{}
-	queryResult := db.Db.Preload("User").Preload("Reservations").First(&result, "id=?", listingId)
+	queryResult := db.Db.Preload("User").Preload("Favorites").Preload("Reservations").First(&result, "id=?", listingId)
 	if errors.Is(queryResult.Error, gorm.ErrRecordNotFound) {
 		ctx.JSON(http.StatusNotFound, common.ErrorApiResponse{StatusCode: http.StatusNotFound, Errors: lisitngNotFoundErr.Error()})
 		return
@@ -83,13 +84,19 @@ func reserveListing(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{Errors: err.Error(), StatusCode: http.StatusBadRequest})
 		return
 	}
-
 	listingID, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{Errors: acceptNumberIdOnlyErr.Error()})
 		return
 	}
+	// Check if user is owner.
 	user := common.GetUserClaimsFromContext(ctx)
+	var isOwner bool
+	db.Db.Model(&db.Listing{}).Where("id=? AND user_id=?", listingID, user.Uid).Select("count(*)>0").Find(&isOwner)
+	if isOwner {
+		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{Errors: ownerCantMakeReservationOnOwnPropertyErr.Error()})
+		return
+	}
 	reservationExist := db.Reservation{}
 	result := db.Db.Where("start_date=? AND end_date=?", json.StartDate.Format(time.DateOnly), json.EndDate.Format(time.DateOnly)).First(&reservationExist, "listing_id=?", uint(listingID))
 	if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
@@ -105,10 +112,10 @@ func reserveListing(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, common.OkApiResponse{Data: nil})
 }
 func getUserTrips(ctx *gin.Context) {
-	var listings []tripsResponse
+	var trips []tripsResponse
 	user := common.GetUserClaimsFromContext(ctx)
-	db.Db.Raw("SELECT *,Reservations.id as reservation_id FROM Reservations INNER JOIN Listings ON Reservations.listing_id=Listings.id WHERE Reservations.user_id=? ORDER BY Reservations.created_at DESC", user.Uid).Find(&listings)
-	ctx.JSON(http.StatusOK, gin.H{"data": listings})
+	db.Db.Raw("SELECT *,Reservations.id as reservation_id FROM Reservations INNER JOIN Listings ON Reservations.listing_id=Listings.id WHERE Reservations.user_id=? AND Reservations.start_date=? ORDER BY Reservations.created_at DESC", user.Uid, time.Now()).Find(&trips)
+	ctx.JSON(http.StatusOK, common.OkApiResponse{Data: trips, StatusCode: http.StatusOK})
 }
 func cancelReserve(ctx *gin.Context) {
 	reservationId, err := strconv.ParseUint(ctx.Param("id"), 0, 0)
@@ -119,7 +126,6 @@ func cancelReserve(ctx *gin.Context) {
 	}
 	var reservation db.Reservation
 	result := db.Db.First(&reservation, reservationId)
-	println(result.Error.Error())
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{Errors: reservationDoesntExistErr.Error(), StatusCode: http.StatusBadRequest})
 		return
@@ -130,4 +136,12 @@ func cancelReserve(ctx *gin.Context) {
 	}
 	db.Db.Unscoped().Delete(&reservation)
 	ctx.JSON(http.StatusOK, common.OkApiResponse{StatusCode: http.StatusOK})
+}
+
+// / Get current user reservation on properties.
+func getUserReservations(ctx *gin.Context) {
+	var reservations []reservationsResponse
+	user := common.GetUserClaimsFromContext(ctx)
+	db.Db.Raw("SELECT * FROM Reservations INNER JOIN Listings ON Reservations.listing_id=Listings.id WHERE Listings.user_id=?", user.Uid).Scan(&reservations)
+	ctx.JSON(http.StatusOK, common.OkApiResponse{StatusCode: http.StatusOK, Data: reservations})
 }

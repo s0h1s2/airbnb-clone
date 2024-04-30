@@ -34,19 +34,20 @@ type userResponse struct {
 	Name  string `json:"name"`
 }
 type listingResponse struct {
-	Id            uint             `json:"id"`
-	Title         string           `json:"title"`
-	Description   string           `json:"description"`
-	ImageSrc      string           `json:"imageSrc"`
-	Country       string           `json:"country"`
-	Location      locationResponse `json:"location"`
-	GuestCount    int              `json:"guestCount"`
-	RoomCount     int              `json:"roomCount"`
-	BathroomCount int              `json:"bathroomCount"`
-	Category      string           `json:"category"`
-	Price         float32          `json:"price"`
-	Reservations  []db.Reservation `json:"reservations"`
-	User          userResponse     `json:"user"`
+	Id            uint                 `json:"id"`
+	Title         string               `json:"title"`
+	Description   string               `json:"description"`
+	ImageSrc      string               `json:"imageSrc"`
+	Country       string               `json:"country"`
+	Location      locationResponse     `json:"location"`
+	GuestCount    int                  `json:"guestCount"`
+	RoomCount     int                  `json:"roomCount"`
+	BathroomCount int                  `json:"bathroomCount"`
+	Category      string               `json:"category"`
+	Price         float32              `json:"price"`
+	Reservations  []db.Reservation     `json:"reservations"`
+	User          userResponse         `json:"user"`
+	Favorites     []db.ListingFavorite `json:"favorites"`
 }
 type tripsResponse struct {
 	ReservationID uint    `json:"id"`
@@ -58,6 +59,9 @@ type tripsResponse struct {
 	Country       string  `json:"country"`
 	Imagesrc      string  `json:"imageSrc"`
 	Category      string  `json:"category"`
+}
+type reservationsResponse struct {
+	tripsResponse
 }
 
 func (l *listingResponse) Response(data db.Listing) listingResponse {
@@ -76,6 +80,7 @@ func (l *listingResponse) Response(data db.Listing) listingResponse {
 		Reservations:  data.Reservations,
 		Price:         data.Price,
 		User:          userResponse{Name: data.User.Name, Email: data.User.Email},
+		Favorites:     data.Favorites,
 	}
 }
 func (l *listingsResponse) Response(listings []db.Listing) (response []listingsResponse) {

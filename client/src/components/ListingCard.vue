@@ -5,7 +5,7 @@
         <img :src="listing.imageSrc" class="object-cover w-full h-full group-hover:scale-110 transition"
           alt="Property photo">
         <div class="absolute top-3 right-3">
-          <HeartButton :listing-id="listingId" :favorites="listing.favorites" />
+          <HeartButton :listing-id="listingId" :favorites="listing.favorites || []" />
         </div>
       </div>
       <div class="font-semibold text-lg">
