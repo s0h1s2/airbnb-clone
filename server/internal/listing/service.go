@@ -114,23 +114,31 @@ func reserveListing(ctx *gin.Context) {
 func getUserTrips(ctx *gin.Context) {
 	var trips []tripsResponse
 	user := common.GetUserClaimsFromContext(ctx)
-	db.Db.Raw("SELECT *,Reservations.id as reservation_id FROM Reservations INNER JOIN Listings ON Reservations.listing_id=Listings.id WHERE Reservations.user_id=? AND Reservations.start_date=? ORDER BY Reservations.created_at DESC", user.Uid, time.Now()).Find(&trips)
+	db.Db.Raw("SELECT *,Reservations.id as reservation_id FROM Reservations INNER JOIN Listings ON Reservations.listing_id=Listings.id WHERE Reservations.user_id=? AND Reservations.start_date>=? ORDER BY Reservations.created_at DESC", user.Uid, datatypes.Date(time.Now())).Find(&trips)
 	ctx.JSON(http.StatusOK, common.OkApiResponse{Data: trips, StatusCode: http.StatusOK})
 }
 func cancelReserve(ctx *gin.Context) {
 	reservationId, err := strconv.ParseUint(ctx.Param("id"), 0, 0)
-	userId := common.GetUserClaimsFromContext(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{Errors: acceptNumberIdOnlyErr.Error(), StatusCode: http.StatusBadRequest})
 		return
 	}
+	userId := common.GetUserClaimsFromContext(ctx)
 	var reservation db.Reservation
 	result := db.Db.First(&reservation, reservationId)
+
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{Errors: reservationDoesntExistErr.Error(), StatusCode: http.StatusBadRequest})
 		return
 	}
-	if reservation.UserId != userId.Uid {
+	// check if current user is owner of the listing or not
+	var listing db.Listing
+	listingResult := db.Db.Find(&listing, "id=?", reservation.ListingID)
+	if errors.Is(listingResult.Error, gorm.ErrRecordNotFound) {
+		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{Errors: lisitngNotFoundErr.Error(), StatusCode: http.StatusBadRequest})
+		return
+	}
+	if reservation.UserId != userId.Uid && listing.UserId != userId.Uid {
 		ctx.JSON(http.StatusUnauthorized, common.ErrorApiResponse{Errors: nil, StatusCode: http.StatusUnauthorized})
 		return
 	}
@@ -140,8 +148,8 @@ func cancelReserve(ctx *gin.Context) {
 
 // / Get current user reservation on properties.
 func getUserReservations(ctx *gin.Context) {
-	var reservations []reservationsResponse
+	var reservations []tripsResponse
 	user := common.GetUserClaimsFromContext(ctx)
-	db.Db.Raw("SELECT * FROM Reservations INNER JOIN Listings ON Reservations.listing_id=Listings.id WHERE Listings.user_id=?", user.Uid).Scan(&reservations)
+	db.Db.Raw("SELECT *,Reservations.id as reservation_id  FROM Reservations INNER JOIN Listings ON Reservations.listing_id=Listings.id WHERE Listings.user_id=? AND Reservations.start_date>=?", user.Uid, datatypes.Date(time.Now())).Scan(&reservations)
 	ctx.JSON(http.StatusOK, common.OkApiResponse{StatusCode: http.StatusOK, Data: reservations})
 }
