@@ -6,6 +6,8 @@ type ErrorApiResponse struct {
 }
 
 type OkApiResponse struct {
-	Data       interface{} `json:"data"`
-	StatusCode int         `json:"statusCode"`
+	Data        interface{} `json:"data"`
+	StatusCode  int         `json:"statusCode"`
+	CurrentPage int         `json:"currentPage"`
+	TotalPages  int         `json:"totalPages"`
 }

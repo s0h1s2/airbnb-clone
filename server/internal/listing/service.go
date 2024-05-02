@@ -23,6 +23,8 @@ var (
 	favoriteExistErr                         = errors.New("Favorite exist.")
 )
 
+const listingLimit = 10
+
 func getListings(ctx *gin.Context) {
 	clauses := make([]clause.Expression, 0)
 
@@ -30,10 +32,23 @@ func getListings(ctx *gin.Context) {
 	if exists {
 		clauses = append(clauses, clause.Like{Column: "category", Value: category})
 	}
+	pageNum := 1
+	page, exists := ctx.GetQuery("page")
+	if exists {
+		var err error
+		pageNum, err = strconv.Atoi(page)
+		if err != nil {
+			pageNum = 1
+		}
+	}
+	offset := (pageNum - 1) * listingLimit
+	var recordCount int64
+	db.Db.Model(&db.Listing{}).Count(&recordCount)
+	totalPages := recordCount % int64(listingLimit)
 	listings := []db.Listing{}
-	db.Db.Clauses(clauses...).Preload(clause.Associations).Order("ID desc").Find(&listings)
+	db.Db.Clauses(clauses...).Preload(clause.Associations).Order("ID desc").Offset(offset).Limit(listingLimit).Find(&listings)
 	response := &listingsResponse{}
-	ctx.JSON(http.StatusOK, common.OkApiResponse{StatusCode: http.StatusOK, Data: response.Response(listings)})
+	ctx.JSON(http.StatusOK, common.OkApiResponse{CurrentPage: pageNum, TotalPages: int(totalPages), StatusCode: http.StatusOK, Data: response.Response(listings)})
 	return
 }
 func createNewListing(ctx *gin.Context) {
