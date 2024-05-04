@@ -14,4 +14,5 @@ func RegisterRoutes(route gin.IRouter) {
 	route.DELETE("/listing/:id/cancel_reserve", middleware.IsAuth(), cancelReserve)
 	route.GET("/listing/trips", middleware.IsAuth(), getUserTrips)
 	route.GET("/listing/reservations", middleware.IsAuth(), getUserReservations)
+	route.GET("/listing/favorites", middleware.IsAuth(), getUserFavorites)
 }

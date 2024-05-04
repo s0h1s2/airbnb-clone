@@ -19,6 +19,7 @@
     "@types/vue-select": "^3.16.8",
     "@vee-validate/zod": "^4.12.6",
     "@vuepic/vue-datepicker": "^8.5.0",
+    "@vueuse/core": "^10.9.0",
     "axios": "^1.6.8",
     "date-fns": "^3.6.0",
     "oh-vue-icons": "^1.0.0-rc3",

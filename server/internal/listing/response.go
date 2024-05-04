@@ -49,6 +49,14 @@ type listingResponse struct {
 	User          userResponse         `json:"user"`
 	Favorites     []db.ListingFavorite `json:"favorites"`
 }
+type favoritesResponse struct {
+	ID       uint    `json:"id"`
+	Title    string  `json:"title"`
+	Price    float32 `json:"price"`
+	Country  string  `json:"country"`
+	Imagesrc string  `json:"imageSrc"`
+	Category string  `json:"category"`
+}
 type tripsResponse struct {
 	ReservationID uint    `json:"id"`
 	ListingID     uint    `json:"listingId"`

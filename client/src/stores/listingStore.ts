@@ -10,13 +10,30 @@ interface ApiParams {
 export const useListingStore = defineStore("listings", {
   state: () => ({
     listings: [] as Listing[],
-    isLoaded: false
+    isLoaded: false,
+    page: 1,
+    totalPage: 100,
+    category: ""
   }),
   actions: {
     getListings(params?: ApiParams) {
+
+      if (this.category != params?.category) {
+        this.listings = []
+        this.page = 1
+        this.totalPage = 100
+        this.category = params?.category as string
+      }
+      if (this.page > this.totalPage) {
+        return
+      }
+
       this.isLoaded = false
-      client.get<OkResponseResult<Listing[]>>("/listing", { params: params }).then((r) => {
-        this.listings = r.data.data
+      client.get<OkResponseResult<Listing[]>>("/listing", { params: { ...params, page: this.page } }).then((r) => {
+        console.log(r.data.totalPages, r.data.currentPage)
+        this.listings = [...this.listings, ...r.data.data]
+        this.totalPage = r.data.totalPages
+        this.page++
       }).catch(() => {
       }).finally(() => {
         this.isLoaded = true

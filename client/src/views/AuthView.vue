@@ -18,7 +18,6 @@ const loginModal = useLoginModalStore()
 if (isAuth.value == true) {
   router.replace(route.query.redirect?.toString() || "/")
 }
-
 onMounted(() => {
   loginModal.onOpen()
 })

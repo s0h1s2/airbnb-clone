@@ -22,7 +22,10 @@ const router = createRouter({
     {
       path: '/favorites',
       name: 'favorites',
-      component: FavoritesView
+      component: FavoritesView,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: "/trips",

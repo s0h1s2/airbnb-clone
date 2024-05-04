@@ -24,10 +24,11 @@ type Listing struct {
 
 type ListingFavorite struct {
 	gorm.Model `json:"-"`
-	ListingId  uint `json:"-"`
+	ListingID  uint `json:"-"`
+	Listing    Listing
 	UserId     uint `json:"userId"`
 }
 
 func (l *Listing) Favorite(user uint) {
-	Db.Create(&ListingFavorite{ListingId: l.ID, UserId: user})
+	Db.Create(&ListingFavorite{ListingID: l.ID, UserId: user})
 }

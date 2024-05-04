@@ -90,7 +90,7 @@ func favoriteListing(ctx *gin.Context) {
 		return
 	}
 	listingId, _ := strconv.ParseUint(ctx.Param("id"), 0, 0)
-	db.Db.Create(&db.ListingFavorite{ListingId: uint(listingId), UserId: user.Uid})
+	db.Db.Create(&db.ListingFavorite{ListingID: uint(listingId), UserId: user.Uid})
 	ctx.JSON(http.StatusOK, common.OkApiResponse{})
 }
 func reserveListing(ctx *gin.Context) {
@@ -167,4 +167,10 @@ func getUserReservations(ctx *gin.Context) {
 	user := common.GetUserClaimsFromContext(ctx)
 	db.Db.Raw("SELECT *,Reservations.id as reservation_id  FROM Reservations INNER JOIN Listings ON Reservations.listing_id=Listings.id WHERE Listings.user_id=? AND Reservations.start_date>=?", user.Uid, datatypes.Date(time.Now())).Scan(&reservations)
 	ctx.JSON(http.StatusOK, common.OkApiResponse{StatusCode: http.StatusOK, Data: reservations})
+}
+func getUserFavorites(ctx *gin.Context) {
+	var listings []favoritesResponse
+	user := common.GetUserClaimsFromContext(ctx)
+	db.Db.Raw("SELECT * FROM listing_favorites INNER JOIN listings ON listing_favorites.listing_id=listings.id WHERE listing_favorites.user_id=?", user.Uid).Scan(&listings)
+	ctx.JSON(http.StatusOK, common.OkApiResponse{Data: listings, StatusCode: http.StatusOK})
 }
