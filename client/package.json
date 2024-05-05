@@ -22,6 +22,7 @@
     "@vueuse/core": "^10.9.0",
     "axios": "^1.6.8",
     "date-fns": "^3.6.0",
+    "normalize.css": "^8.0.1",
     "oh-vue-icons": "^1.0.0-rc3",
     "pinia": "^2.1.7",
     "v-calendar": "^3.1.2",

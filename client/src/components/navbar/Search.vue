@@ -1,5 +1,5 @@
 <template>
-  <div class="border-[1px] w-full md:w-auto py-2 rounded-full shadow-sm hover:shadow-md transition cursor-pointer">
+  <div @click="filterModal.onOpen()" class="border-[1px] w-full md:w-auto py-2 rounded-full shadow-sm hover:shadow-md transition cursor-pointer">
     <div class="flex flex-row items-center justify-between">
       <div class="text-sm font-semibold px-6">
         Anywhere
@@ -18,10 +18,9 @@
 </template>
 
 <script setup lang="ts">
+import { useFilterModalStore } from '@/stores/filterModalStore';
 
-import { OiSearch } from "oh-vue-icons/icons";
-
-
+const filterModal=useFilterModalStore()
 </script>
 
 <style scoped></style>

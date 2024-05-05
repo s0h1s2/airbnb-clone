@@ -10,6 +10,7 @@ import VueSelect from "vue-select";
 import { useUserStore } from './stores/userStore'
 
 // CSS
+import "normalize.css/normalize.css"
 import "vue-toastification/dist/index.css";
 import "vue-select/dist/vue-select.css";
 import "leaflet/dist/leaflet.css";
