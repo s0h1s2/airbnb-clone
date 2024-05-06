@@ -1,5 +1,5 @@
 <template>
-  <v-select   placeholder="Anywhere" v-model="selectedCountry" title="Countries" :options="countries.getAll" :clearable="true">
+  <v-select placeholder="Anywhere" v-model="selectedCountry" title="Countries" :options="countries.getAll" :clearable="true">
     <template #option="{ label,region,flag }">
       <div class="flex flex-row items-center gap-3">
         <div>

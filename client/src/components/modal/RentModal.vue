@@ -68,8 +68,8 @@ import { useToast } from "vue-toastification"
 import { useRentModalStore } from "@/stores/rentModalStore";
 import { type Ref, ref, readonly, watch, onMounted, nextTick } from "vue"
 import { CATEGORIES } from "@/constants/categories"
-import CategoryInput from "@/components/inputs/categoryinput.vue"
-import CountrySelect from "@/components/inputs/countryselect.vue"
+import CategoryInput from "@/components/inputs/CategoryInput.vue"
+import CountrySelect from "@/components/inputs/CountrySelect.vue"
 import CounterInput from "@/components/CounterInput.vue"
 import ImageUpload from "@/components/inputs/ImageUpload.vue"
 import type { Country } from "@/types/country"
@@ -92,8 +92,6 @@ const currentStep: Ref<Steps> = ref(Steps.CATEGORY)
 const imageSrc: Ref<string | null> = ref(null)
 const rentModal = useRentModalStore()
 const categories = readonly(CATEGORIES)
-const zoom = ref(4)
-const map: Ref<L.Map | null> = ref(null)
 const selectedCountry = defineModel<Country>()
 const locationCoord: Ref<L.LatLngExpression> = ref([40.737, -73.923])
 watch(imageSrc, () => {
