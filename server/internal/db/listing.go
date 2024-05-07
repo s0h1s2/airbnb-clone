@@ -25,7 +25,6 @@ type Listing struct {
 type ListingFavorite struct {
 	gorm.Model `json:"-"`
 	ListingID  uint `json:"-"`
-	Listing    Listing
 	UserId     uint `json:"userId"`
 }
 

@@ -2,6 +2,7 @@ package listing
 
 import (
 	"errors"
+	"math"
 	"net/http"
 	"strconv"
 	"time"
@@ -32,6 +33,10 @@ func getListings(ctx *gin.Context) {
 	if exists {
 		clauses = append(clauses, clause.Like{Column: "category", Value: category})
 	}
+	startDate, exists := ctx.GetQuery("startDate")
+	if exists {
+		clauses = append(clauses, clause.Gte{Column: "Reservations.start_date", Value: startDate})
+	}
 	pageNum := 1
 	page, exists := ctx.GetQuery("page")
 	if exists {
@@ -44,12 +49,11 @@ func getListings(ctx *gin.Context) {
 	offset := (pageNum - 1) * listingLimit
 	var recordCount int64
 	db.Db.Model(&db.Listing{}).Count(&recordCount)
-	totalPages := recordCount % int64(listingLimit)
+	totalPages := int64(math.Ceil(float64(recordCount) / listingLimit))
 	listings := []db.Listing{}
-	db.Db.Clauses(clauses...).Preload(clause.Associations).Order("ID desc").Offset(offset).Limit(listingLimit).Find(&listings)
+	db.Db.Preload("Favorites").Clauses(clauses...).Order("ID desc").Offset(offset).Limit(listingLimit).Find(&listings)
 	response := &listingsResponse{}
 	ctx.JSON(http.StatusOK, common.OkApiResponse{CurrentPage: pageNum, TotalPages: int(totalPages), StatusCode: http.StatusOK, Data: response.Response(listings)})
-	return
 }
 func createNewListing(ctx *gin.Context) {
 	var json createListingRequest

@@ -14,7 +14,7 @@
         <v-icon name="hi-solid-minus-sm"></v-icon>
       </div>
       <div class="font-light text-xl text-neutral-600 ">
-        {{ counter }}
+        {{ count }}
       </div>
       <div @click="increaseCounter()"
         class="w-10 h-10 rounded-full border-[1px] border-neutral-400 flex items-center justify-center text-neutral-600 cursor-pointer hover:opacity-80 transition">
@@ -27,29 +27,31 @@
 <script setup lang="ts">
 
 import { useField } from 'vee-validate';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 interface Props {
   title: string
   subtitle: string
   name: string
 }
 const props = defineProps<Props>()
-
+const emit=defineEmits<{onValueChange:[number,void]}>()
 const { setValue } = useField(() => props.name)
 onMounted(() => {
   setValue(1)
 })
-const counter = ref(1)
 
+const count=ref(1)
+watch(count,()=>{
+  emit("onValueChange",count.value)
+})
 function increaseCounter() {
-  counter.value++
-  setValue(counter.value)
-
+  count.value++
+  setValue(count.value)
 }
 function decreaseCounter() {
-  if (counter.value > 1) {
-    counter.value--
-    setValue(counter.value)
+  if (count.value > 1) {
+    count.value--
+    setValue(count.value)
   }
 }
 </script>
