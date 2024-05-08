@@ -16,10 +16,13 @@ const scrollContainer = ref(null)
 
 listingStore.getListings()
 useInfiniteScroll(scrollContainer, () => {
+  if (listingStore.page >= listingStore.totalPage) {
+    return
+  }
   listingStore.getListings()
 }, { distance: 10 })
-watch(() => route.query.category, () => {
-  listingStore.getListings({ category: route.query.category?.toString() })
+watch(() => [route.query.category, route.query.guests, route.query.bathrooms, route.query.rooms, route.query.endDate, route.query.startDate, route.query.country], () => {
+  listingStore.getListings({ ...route.query })
 })
 
 </script>

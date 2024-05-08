@@ -15,15 +15,18 @@
       <div v-show="currentStep == Steps.DATE">
         <div class="flex flex-col gap-8">
           <Heading title="When do you plan to go?" subtitle="Make sure everyone is free!" />
-          <DatePicker :minDate="new Date()" class="w-full" v-model.range="selectedDates" />
+          <DatePicker :minDate="new Date()" class="w-full" v-model.range="selectedDates!" />
         </div>
       </div>
       <div v-show="currentStep == Steps.ROOMS">
         <div class="flex flex-col gap-8">
           <Heading title="More information" subtitle="Find your perfect place!" />
-          <CounterInput @onValueChange="(val)=>guests=val" name="guests" title="Guests" subtitle="How many guests are coming?" />
-          <CounterInput @onValueChange="(val)=>rooms=val" name="rooms" title="Rooms" subtitle="How many rooms do you need?" />
-          <CounterInput @onValueChange="(val)=>bathrooms=val" name="bathrooms" title="Bathrooms" subtitle="How many bathrooms do you need?" />
+          <CounterInput @onValueChange="(val) => guests = val" name="guests" title="Guests"
+            subtitle="How many guests are coming?" />
+          <CounterInput @onValueChange="(val) => rooms = val" name="rooms" title="Rooms"
+            subtitle="How many rooms do you need?" />
+          <CounterInput @onValueChange="(val) => bathrooms = val" name="bathrooms" title="Bathrooms"
+            subtitle="How many bathrooms do you need?" />
         </div>
       </div>
     </template>
@@ -37,7 +40,7 @@ import CountrySelect from "@/components/inputs/CountrySelect.vue"
 import WorldMap from "@/components/WorldMap.vue"
 import { useFilterModalStore } from "@/stores/filterModalStore";
 import { useRouter } from "vue-router"
-import { computed, ref, watch, type Ref } from "vue";
+import { computed, ref, type Ref } from "vue";
 import type { Country } from "@/types/country";
 import { DatePicker } from "v-calendar"
 import { formatISO } from "date-fns"
@@ -67,17 +70,17 @@ const selectedDates = ref({
   start: new Date(),
   end: null
 })
-const rooms=ref(1)
-const bathrooms=ref(1)
-const guests=ref(1)
+const rooms = ref(1)
+const bathrooms = ref(1)
+const guests = ref(1)
 
 interface QueryParams {
   country?: string
-  startDate?:string
-  endDate?:string
-  guests?:number
-  bathrooms?:number
-  rooms?:number
+  startDate?: string
+  endDate?: string
+  guests?: number
+  bathrooms?: number
+  rooms?: number
 }
 function filterSearch() {
   if (currentStep.value != Steps.ROOMS) {
@@ -88,13 +91,16 @@ function filterSearch() {
   if (selectedCountry?.value != undefined) {
     query.country = selectedCountry.value.value
   }
-  query.startDate=formatISO(selectedDates.value.start,{representation:"date"})
-  if (selectedDates.value.end!=null) {
-    query.endDate=formatISO(selectedDates.value.end,{representation:"date"})
+  query.startDate = formatISO(selectedDates.value.start, { representation: "complete" })
+  query.startDate = `"${query.startDate}"`
+  if (selectedDates.value.end != null) {
+    query.endDate = formatISO(selectedDates.value.end, { representation: "complete" })
+    query.endDate = `"${query.endDate}"`
+
   }
-  query.rooms=rooms.value
-  query.bathrooms=bathrooms.value
-  query.guests=guests.value
+  query.rooms = rooms.value
+  query.bathrooms = bathrooms.value
+  query.guests = guests.value
   router.push({ name: "home", query: { ...query } })
   filterModal.onClose()
 }

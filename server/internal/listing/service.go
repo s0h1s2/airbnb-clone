@@ -12,7 +12,6 @@ import (
 	"github.com/s0h1s2/airbnb-clone/internal/db"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 var (
@@ -22,38 +21,63 @@ var (
 	reservationDoesntExistErr                = errors.New("Reservation doesn't exist.")
 	ownerCantMakeReservationOnOwnPropertyErr = errors.New("Owner can't make reservation on own property.")
 	favoriteExistErr                         = errors.New("Favorite exist.")
+	bindQueryErr                             = errors.New("Unable to bind query")
 )
 
 const listingLimit = 10
 
-func getListings(ctx *gin.Context) {
-	clauses := make([]clause.Expression, 0)
+type listingsQuery struct {
+	Page      int64           `form:"page,default=1"`
+	StartDate *datatypes.Date `form:"startDate"`
+	EndDate   *datatypes.Date `form:"endDate"`
+	Category  string          `form:"category"`
+	Country   string          `form:"country"`
+	Guests    int             `form:"guests"`
+	Rooms     int             `form:"rooms"`
+	Bathrooms int             `form:"bathrooms"`
+}
 
-	category, exists := ctx.GetQuery("category")
-	if exists {
-		clauses = append(clauses, clause.Like{Column: "category", Value: category})
+func getListings(ctx *gin.Context) {
+	queryParams := listingsQuery{}
+	if err := ctx.BindQuery(&queryParams); err != nil {
+		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{Errors: err.Error(), StatusCode: http.StatusBadRequest})
+		return
 	}
-	startDate, exists := ctx.GetQuery("startDate")
-	if exists {
-		clauses = append(clauses, clause.Gte{Column: "Reservations.start_date", Value: startDate})
-	}
-	pageNum := 1
-	page, exists := ctx.GetQuery("page")
-	if exists {
-		var err error
-		pageNum, err = strconv.Atoi(page)
-		if err != nil {
-			pageNum = 1
-		}
-	}
-	offset := (pageNum - 1) * listingLimit
-	var recordCount int64
-	db.Db.Model(&db.Listing{}).Count(&recordCount)
-	totalPages := int64(math.Ceil(float64(recordCount) / listingLimit))
+
 	listings := []db.Listing{}
-	db.Db.Preload("Favorites").Clauses(clauses...).Order("ID desc").Offset(offset).Limit(listingLimit).Find(&listings)
+	dbQuery := db.Db.Model(&db.Listing{}).Joins("LEFT JOIN Reservations ON Reservations.listing_id=listings.id").Preload("Favorites").Order("ID desc").Session(&gorm.Session{})
+
+	if queryParams.Rooms > 0 {
+		dbQuery = dbQuery.Where("listings.RoomCount = ?", queryParams.Rooms)
+	}
+	if queryParams.Bathrooms > 0 {
+		dbQuery = dbQuery.Where("listings.bathroom_count = ?", queryParams.Bathrooms)
+	}
+	if queryParams.Guests > 0 {
+		dbQuery = dbQuery.Where("listings.guest_count = ?", queryParams.Guests)
+	}
+	if queryParams.Country != "" {
+		dbQuery = dbQuery.Where("listings.country= ?", queryParams.Country)
+	}
+	if queryParams.EndDate != nil {
+		dbQuery = dbQuery.Where("NOT reservations.start_date>=? AND reservations.end_date<?", queryParams.StartDate, queryParams.EndDate)
+	}
+	if queryParams.Category != "" {
+		dbQuery = dbQuery.Where("listings.category=?", queryParams.Category)
+	}
+	var recordCount int64
+	dbQuery.Count(&recordCount)
+	totalPages := int64(math.Ceil(float64(recordCount) / listingLimit))
+	if queryParams.Page > totalPages {
+		queryParams.Page = 1
+	}
+
+	offset := (queryParams.Page - 1) * listingLimit
+
+	dbQuery.Limit(listingLimit).Offset(int(offset)).Find(&listings)
+
 	response := &listingsResponse{}
-	ctx.JSON(http.StatusOK, common.OkApiResponse{CurrentPage: pageNum, TotalPages: int(totalPages), StatusCode: http.StatusOK, Data: response.Response(listings)})
+	ctx.JSON(http.StatusOK, common.OkApiResponse{CurrentPage: queryParams.Page, TotalPages: totalPages, StatusCode: http.StatusOK, Data: response.Response(listings)})
 }
 func createNewListing(ctx *gin.Context) {
 	var json createListingRequest

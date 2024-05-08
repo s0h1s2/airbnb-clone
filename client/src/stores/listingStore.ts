@@ -6,6 +6,12 @@ import type { Axios } from "axios";
 import { defineStore } from "pinia";
 interface ApiParams {
   category?: string
+  country?: string
+  bathrooms?: number
+  guests?: number
+  rooms?: number
+  startDate?: string
+  endDate?: string
 }
 export const useListingStore = defineStore("listings", {
   state: () => ({
@@ -13,20 +19,10 @@ export const useListingStore = defineStore("listings", {
     isLoaded: false,
     page: 1,
     totalPage: 100,
-    category: ""
   }),
   actions: {
     getListings(params?: ApiParams) {
-      if (this.category != params?.category) {
-        this.listings = []
-        this.page = 1
-        this.totalPage = 100
-        this.category = params?.category as string
-      }
-      
-      if (this.page > this.totalPage) {
-        return
-      }
+      this.$reset()
       this.isLoaded = false
       client.get<OkResponseResult<Listing[]>>("/listing", { params: { ...params, page: this.page } }).then((r) => {
         this.listings = [...this.listings, ...r.data.data]
