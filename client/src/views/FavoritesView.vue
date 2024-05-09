@@ -4,7 +4,7 @@
     :showReset="false" />
   <Container v-else>
     <Heading title="Favorites" subtitle="List of places you favorited!" />
-    <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+    <div class="mt-10 grid ml grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
       <ListingCard v-for="favorite in favorites" :listing="favorite" />
     </div>
   </Container>

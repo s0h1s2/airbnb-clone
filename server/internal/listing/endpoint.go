@@ -7,12 +7,15 @@ import (
 
 func RegisterRoutes(route gin.IRouter) {
 	route.GET("/listing", getListings)
+	route.GET("/listing/properties", middleware.IsAuth(), getOwnerProperties)
+	route.GET("/listing/trips", middleware.IsAuth(), getUserTrips)
+	route.GET("/listing/reservations", middleware.IsAuth(), getUserReservations)
 	route.GET("/listing/:id", getListingById)
+	route.GET("/listing/favorites", middleware.IsAuth(), getUserFavorites)
 	route.POST("/listing", middleware.IsAuth(), createNewListing)
 	route.POST("/listing/:id/favorite", middleware.IsAuth(), favoriteListing)
 	route.POST("/listing/:id/reserve", middleware.IsAuth(), reserveListing)
 	route.DELETE("/listing/:id/cancel_reserve", middleware.IsAuth(), cancelReserve)
-	route.GET("/listing/trips", middleware.IsAuth(), getUserTrips)
-	route.GET("/listing/reservations", middleware.IsAuth(), getUserReservations)
-	route.GET("/listing/favorites", middleware.IsAuth(), getUserFavorites)
+	route.DELETE("/listing/:id", middleware.IsAuth(), deleteProperty)
+
 }

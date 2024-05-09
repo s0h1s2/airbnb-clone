@@ -202,3 +202,28 @@ func getUserFavorites(ctx *gin.Context) {
 	db.Db.Raw("SELECT * FROM listing_favorites INNER JOIN listings ON listing_favorites.listing_id=listings.id WHERE listing_favorites.user_id=?", user.Uid).Scan(&listings)
 	ctx.JSON(http.StatusOK, common.OkApiResponse{Data: listings, StatusCode: http.StatusOK})
 }
+func getOwnerProperties(ctx *gin.Context) {
+	var response listingsResponse
+	var result []db.Listing
+	user := common.GetUserClaimsFromContext(ctx)
+	db.Db.Where("user_id=?", user.Uid).Find(&result)
+	ctx.JSON(http.StatusOK, common.OkApiResponse{Data: response.Response(result)})
+}
+func deleteProperty(ctx *gin.Context) {
+	listingIdStr := ctx.Param("id")
+	listingId, err := strconv.ParseUint(listingIdStr, 0, 0)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{Errors: acceptNumberIdOnlyErr.Error(), StatusCode: http.StatusBadRequest})
+		return
+	}
+	user := common.GetUserClaimsFromContext(ctx)
+	var listing db.Listing
+	result := db.Db.Where("id=? AND user_id=?", listingId, user.Uid).First(&listing)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		ctx.JSON(http.StatusBadRequest, common.ErrorApiResponse{Errors: lisitngNotFoundErr.Error(), StatusCode: http.StatusBadRequest})
+		return
+	}
+	db.Db.Model(&db.Listing{}).Delete("id=?", listingId)
+	ctx.JSON(http.StatusOK, common.OkApiResponse{StatusCode: http.StatusOK})
+
+}

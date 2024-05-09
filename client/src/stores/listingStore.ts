@@ -22,11 +22,15 @@ export const useListingStore = defineStore("listings", {
   }),
   actions: {
     getListings(params?: ApiParams) {
-      this.$reset()
+      this.page = 1
+      this.totalPage = 100
       this.isLoaded = false
       client.get<OkResponseResult<Listing[]>>("/listing", { params: { ...params, page: this.page } }).then((r) => {
-        this.listings = [...this.listings, ...r.data.data]
+        this.listings = Object.assign(this.listings, r.data.data)
         this.totalPage = r.data.totalPages
+        if (this.page + 1 > this.totalPage) {
+          return
+        }
         this.page++
       }).catch(() => {
       }).finally(() => {
