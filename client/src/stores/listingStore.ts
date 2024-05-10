@@ -4,6 +4,7 @@ import type { Reservation } from "@/types/reservation";
 import type { OkResponseResult } from "@/types/response";
 import type { Axios } from "axios";
 import { defineStore } from "pinia";
+import _ from "lodash"
 interface ApiParams {
   category?: string
   country?: string
@@ -17,21 +18,19 @@ export const useListingStore = defineStore("listings", {
   state: () => ({
     listings: [] as Listing[],
     isLoaded: false,
-    page: 1,
+    page: 0,
     totalPage: 100,
   }),
   actions: {
     getListings(params?: ApiParams) {
-      this.page = 1
-      this.totalPage = 100
+      this.page++
       this.isLoaded = false
       client.get<OkResponseResult<Listing[]>>("/listing", { params: { ...params, page: this.page } }).then((r) => {
-        this.listings = Object.assign(this.listings, r.data.data)
+        this.listings = _.unionBy(r.data.data, this.listings, "id")
         this.totalPage = r.data.totalPages
         if (this.page + 1 > this.totalPage) {
           return
         }
-        this.page++
       }).catch(() => {
       }).finally(() => {
         this.isLoaded = true

@@ -9,7 +9,7 @@ import { useRoute } from "vue-router"
 import { watch, ref } from "vue"
 import { useInfiniteScroll } from "@vueuse/core"
 const listingStore = useListingStore()
-
+const firstTimeLoad = ref(true)
 const route = useRoute()
 
 const scrollContainer = ref(null)
@@ -22,14 +22,14 @@ useInfiniteScroll(scrollContainer, () => {
   listingStore.getListings()
 }, { distance: 10 })
 watch(() => [route.query.category, route.query.guests, route.query.bathrooms, route.query.rooms, route.query.endDate, route.query.startDate, route.query.country], () => {
+  firstTimeLoad.value = true
+  listingStore.$reset()
   listingStore.getListings({ ...route.query })
 })
-
 </script>
 
 <template>
-  <LoadingSpinner v-if="!listingStore.isLoaded" />
-  <template v-else>
+  <template v-if="listingStore.isLoaded">
     <EmptyState v-if="listingStore.listings == null || listingStore.listings.length === 0" />
     <div class="h-screen overflow-y-scroll" ref="scrollContainer" v-else>
       <Container>
@@ -40,6 +40,7 @@ watch(() => [route.query.category, route.query.guests, route.query.bathrooms, ro
       </Container>
     </div>
   </template>
+  <LoadingSpinner v-else />
 </template>
 <style scoped>
 body {
