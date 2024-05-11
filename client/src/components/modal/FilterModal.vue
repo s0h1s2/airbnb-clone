@@ -15,7 +15,7 @@
       <div v-show="currentStep == Steps.DATE">
         <div class="flex flex-col gap-8">
           <Heading title="When do you plan to go?" subtitle="Make sure everyone is free!" />
-          <DatePicker :minDate="new Date()" class="w-full" v-model.range="selectedDates!" />
+          <DatePicker :minDate="new Date()" class="w-full"  v-model.range="selectedDates" />
         </div>
       </div>
       <div v-show="currentStep == Steps.ROOMS">
@@ -68,7 +68,7 @@ const backLabel = computed(() => {
 })
 const selectedDates = ref({
   start: new Date(),
-  end: null
+  end: new Date()
 })
 const rooms = ref(1)
 const bathrooms = ref(1)
