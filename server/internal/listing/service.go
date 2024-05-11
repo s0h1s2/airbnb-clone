@@ -60,7 +60,7 @@ func getListings(ctx *gin.Context) {
 		dbQuery = dbQuery.Where("listings.country= ?", queryParams.Country)
 	}
 	if queryParams.EndDate != nil {
-		dbQuery = dbQuery.Where("NOT reservations.start_date>=? AND reservations.end_date<?", queryParams.StartDate, queryParams.EndDate)
+		dbQuery = dbQuery.Where("NOT IN (reservations.start_date>=? AND reservations.end_date<=?)", queryParams.StartDate, queryParams.EndDate)
 	}
 	if queryParams.Category != "" {
 		dbQuery = dbQuery.Where("listings.category=?", queryParams.Category)

@@ -31,8 +31,8 @@ const coords = ref([props.lat, props.lan] as L.LatLngExpression)
 watch(() => [props.lan, props.lat], () => {
   coords.value = [props.lat, props.lan] as L.LatLngExpression
 })
-watch(() => coords, (newCoords) => {
-  emit('onCoordChange', newCoords.value)
+watch(coords, (newCoords) => {
+  emit('onCoordChange', newCoords)
 })
 </script>
 

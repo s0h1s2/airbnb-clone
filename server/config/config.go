@@ -13,8 +13,9 @@ type databaseConfig struct {
 	Port     uint16 `env:"DB_PORT"`
 }
 type config struct {
-	Jwt jwtConfig
-	Db  databaseConfig
+	Jwt           jwtConfig
+	Db            databaseConfig
+	ForntendProxy string `env:"PROXY_FRONTEND"`
 }
 
 var Config config

@@ -20,7 +20,8 @@
               <Heading title="Where is your place located?" subtitle="Help guests find you!" />
               <CountrySelect v-model="selectedCountry" />
               <div class="w-auto h-[40vh]">
-                <WorldMap :lat="selectedCountry?.latlang[0] || 40.737 " :lan="selectedCountry?.latlang[1] || -73.923 " @onCoordChange="(coord)=>locationCoord=coord"/>
+                <WorldMap :lat="selectedCountry?.latlang[0] || 40.737" :lan="selectedCountry?.latlang[1] || -73.923"
+                  @onCoordChange="(coord) => locationCoord = coord" />
               </div>
             </div>
           </div>
@@ -66,7 +67,7 @@ import Input from "../inputs/Input.vue"
 import { useForm } from "vee-validate"
 import { useToast } from "vue-toastification"
 import { useRentModalStore } from "@/stores/rentModalStore";
-import { type Ref, ref, readonly, watch, onMounted, nextTick } from "vue"
+import { type Ref, ref, readonly, watch } from "vue"
 import { CATEGORIES } from "@/constants/categories"
 import CategoryInput from "@/components/inputs/CategoryInput.vue"
 import CountrySelect from "@/components/inputs/CountrySelect.vue"
