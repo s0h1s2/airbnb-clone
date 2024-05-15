@@ -21,7 +21,7 @@ useInfiniteScroll(scrollContainer, () => {
   }
   listingStore.getListings()
 }, { distance: 10 })
-watch(() => [route.query.category, route.query.guests, route.query.bathrooms, route.query.rooms, route.query.endDate, route.query.startDate, route.query.country], () => {
+watch(() => [route.query,route.query.category, route.query.guests, route.query.bathrooms, route.query.rooms, route.query.endDate, route.query.startDate, route.query.country], () => {
   firstTimeLoad.value = true
   listingStore.$reset()
   listingStore.getListings({ ...route.query })
