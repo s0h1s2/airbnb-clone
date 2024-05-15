@@ -30,7 +30,7 @@ const place = ref("Anywhere")
 const week = ref("Anyweek")
 const guests = ref(0)
 const route = useRoute()
-watch(() => [route.query.country, route.query.startDate, route.query.endDate, route.query.guests], () => {
+watch(() => [route.query,route.query.country, route.query.startDate, route.query.endDate, route.query.guests], () => {
   if (route.query.country != undefined) {
     place.value = countriesStore.getByValue(route.query.country?.toString() || "")?.label.toString() || "Anywhere"
   }
