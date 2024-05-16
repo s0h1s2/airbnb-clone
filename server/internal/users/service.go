@@ -82,6 +82,7 @@ func userAuthRoute(ctx *gin.Context) {
 		})
 		return
 	}
+	ctx.SetSameSite(http.SameSiteNoneMode)
 	ctx.SetCookie("token", tokenString, int(expireTime.Unix()), "/", "", false, true)
 	ctx.JSON(http.StatusOK, common.OkApiResponse{Data: loginUserResponse{Uid: user.ID, Email: user.Email, Name: user.Name}, StatusCode: http.StatusOK})
 }
