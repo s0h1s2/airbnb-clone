@@ -27,14 +27,14 @@ var (
 const listingLimit = 10
 
 type listingsQuery struct {
-	Page      int64           `form:"page,default=1"`
-	StartDate *datatypes.Date `form:"startDate"`
-	EndDate   *datatypes.Date `form:"endDate"`
-	Category  string          `form:"category"`
-	Country   string          `form:"country"`
-	Guests    int             `form:"guests"`
-	Rooms     int             `form:"rooms"`
-	Bathrooms int             `form:"bathrooms"`
+	Page      int64  `form:"page,default=1"`
+	StartDate string `form:"startDate"`
+	EndDate   string `form:"endDate"`
+	Category  string `form:"category"`
+	Country   string `form:"country"`
+	Guests    int    `form:"guests"`
+	Rooms     int    `form:"rooms"`
+	Bathrooms int    `form:"bathrooms"`
 }
 
 func getListings(ctx *gin.Context) {
@@ -59,8 +59,8 @@ func getListings(ctx *gin.Context) {
 	if queryParams.Country != "" {
 		dbQuery = dbQuery.Where("listings.country= ?", queryParams.Country)
 	}
-	if queryParams.EndDate != nil {
-		dbQuery = dbQuery.Where("NOT IN (reservations.start_date>=? AND reservations.end_date<=?)", queryParams.StartDate, queryParams.EndDate)
+	if queryParams.EndDate != "" {
+		dbQuery = dbQuery.Where("NOT EXISTS (SELECT id from reservations re WHERE re.start_date>=cast(? as DATE) AND re.end_date<=cast(? as DATE) and re.listing_id=listings.id)", queryParams.StartDate, queryParams.EndDate)
 	}
 	if queryParams.Category != "" {
 		dbQuery = dbQuery.Where("listings.category=?", queryParams.Category)
@@ -75,7 +75,6 @@ func getListings(ctx *gin.Context) {
 	offset := (queryParams.Page - 1) * listingLimit
 
 	dbQuery.Limit(listingLimit).Offset(int(offset)).Find(&listings)
-
 	response := &listingsResponse{}
 	ctx.JSON(http.StatusOK, common.OkApiResponse{CurrentPage: queryParams.Page, TotalPages: totalPages, StatusCode: http.StatusOK, Data: response.Response(listings)})
 }

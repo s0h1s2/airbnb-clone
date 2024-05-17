@@ -30,19 +30,24 @@ const place = ref("Anywhere")
 const week = ref("Anyweek")
 const guests = ref(0)
 const route = useRoute()
-watch(() => [route.query,route.query.country, route.query.startDate, route.query.endDate, route.query.guests], () => {
+watch(() => [route.query, route.query.country, route.query.startDate, route.query.endDate, route.query.guests], () => {
   if (route.query.country != undefined) {
     place.value = countriesStore.getByValue(route.query.country?.toString() || "")?.label.toString() || "Anywhere"
+  } else {
+    place.value = "Anywhere"
   }
   if (route.query.startDate != undefined && route.query.endDate != undefined) {
     route.query.startDate = route.query.startDate.toString().replace(/['"]+/g, '')
     route.query.endDate = route.query.endDate.toString().replace(/['"]+/g, '')
     week.value = formatDistanceStrict(parseISO(route.query.startDate), parseISO(route.query.endDate))
+  } else {
+    week.value = "Anyweek"
   }
   if (route.query.guests != undefined) {
     guests.value = parseInt(route.query.guests.toString()) || 0
+  } else {
+    guests.value = 0
   }
-
 })
 </script>
 

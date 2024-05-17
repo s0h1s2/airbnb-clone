@@ -15,7 +15,7 @@
       <div v-show="currentStep == Steps.DATE">
         <div class="flex flex-col gap-8">
           <Heading title="When do you plan to go?" subtitle="Make sure everyone is free!" />
-          <DatePicker :minDate="new Date()" class="w-full"  v-model.range="selectedDates" />
+          <DatePicker :minDate="new Date()" class="w-full" v-model.range="selectedDates" />
         </div>
       </div>
       <div v-show="currentStep == Steps.ROOMS">
@@ -92,11 +92,8 @@ function filterSearch() {
     query.country = selectedCountry.value.value
   }
   query.startDate = formatISO(selectedDates.value.start, { representation: "complete" })
-  query.startDate = `"${query.startDate}"`
   if (selectedDates.value.end != null) {
     query.endDate = formatISO(selectedDates.value.end, { representation: "complete" })
-    query.endDate = `"${query.endDate}"`
-
   }
   query.rooms = rooms.value
   query.bathrooms = bathrooms.value

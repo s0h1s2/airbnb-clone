@@ -103,7 +103,7 @@ watch(selectedCountry, () => {
   setFieldValue('country', selectedCountry.value?.value || "")
 })
 watch(locationCoord, () => {
-  setFieldValue("location", locationCoord.value)
+  setFieldValue("location", { lat: locationCoord.value[0] as number, lng: locationCoord.value[1] as number })
 })
 
 type FormData = {
@@ -115,13 +115,13 @@ type FormData = {
   bathroomCount: number
   imageSrc: string
   price: number
-  location: L.LatLngExpression
+  location: { lat: number, lng: number }
   country: string
 }
 const { handleSubmit, isSubmitting, setFieldValue } = useForm<FormData>({
   initialValues: {
     category: CATEGORIES[0].label,
-    location: { lat: 0, lng: 0 } as L.LatLngExpression,
+    location: { lat: 0, lng: 0 },
     country: ""
   }
 
