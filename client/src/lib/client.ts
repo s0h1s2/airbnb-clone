@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const base = import.meta.env.BASE_URL
+const apiBase = import.meta.env.API_BASE_URL
 
 export const client = axios.create({
-  baseURL: base,
+  baseURL: apiBase,
   withCredentials: true
 })
