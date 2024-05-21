@@ -21,7 +21,7 @@
               <CountrySelect v-model="selectedCountry" />
               <div class="w-auto h-[40vh]">
                 <WorldMap :lat="selectedCountry?.latlang[0] || 40.737" :lan="selectedCountry?.latlang[1] || -73.923"
-                  @onCoordChange="(coord) => locationCoord = coord" />
+                  @onCoordChange="(coord) => locationCoord = coord as L.LatLng" />
               </div>
             </div>
           </div>
@@ -94,7 +94,7 @@ const imageSrc: Ref<string | null> = ref(null)
 const rentModal = useRentModalStore()
 const categories = readonly(CATEGORIES)
 const selectedCountry = defineModel<Country>()
-const locationCoord: Ref<L.LatLngExpression> = ref([40.737, -73.923])
+const locationCoord: Ref<{lat:number,lng:number}> = ref({lat:40.737, lng:-73.923})
 watch(imageSrc, () => {
   setFieldValue('imageSrc', imageSrc?.value || "")
 })
@@ -103,7 +103,7 @@ watch(selectedCountry, () => {
   setFieldValue('country', selectedCountry.value?.value || "")
 })
 watch(locationCoord, () => {
-  setFieldValue("location", { lat: locationCoord.value[0] as number, lng: locationCoord.value[1] as number })
+  setFieldValue("location", { lat: locationCoord.value.lat, lng: locationCoord.value.lng})
 })
 
 type FormData = {
