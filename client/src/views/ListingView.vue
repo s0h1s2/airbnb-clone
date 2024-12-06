@@ -89,15 +89,12 @@ const category = computed(() => {
   return CATEGORIES.find((cat) => cat.label == listing.value?.category)
 })
 
-watchEffect(() => {
-  isLoaded.value = false
-  client.get<OkResponseResult<Listing>>(`listing/${route.params.id}`).then((r) => {
+client.get<OkResponseResult<Listing>>(`listing/${route.params.id}`).then((r) => {
     listing.value = r.data.data
-  }).catch(() => {
+}).catch(() => {
     isLoaded.value = true
     router.replace("/")
-  }).finally(() => {
-    isLoaded.value = true
-  })
+}).finally(() => {
+  isLoaded.value = true
 })
 </script>
